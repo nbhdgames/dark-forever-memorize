@@ -1,0 +1,62 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  border: solid 1px #ddd;
+  border-radius: 2px;
+  padding: 0;
+}
+
+.input {
+  flex: 1 1 0;
+  margin: 2px 4px;
+  height: 26px;
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  outline: none;
+
+  &::placeholder {
+    color: #999;
+  }
+}
+
+.textArea {
+  flex: 1 1 0;
+  margin: 2px 4px;
+  min-height: 124px;
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  outline: none;
+
+  &::placeholder {
+    color: #999;
+  }
+}
+
+.inputNum {
+  text-align: center;
+}
+
+.btn {
+  width: 30px;
+  height: 30px;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.clear {
+  width: 30px;
+  height: 30px;
+  font-size: 30px;
+  line-height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+
+  &.disabled {
+    color: #555;
+  }
+}

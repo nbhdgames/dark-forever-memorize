@@ -1,0 +1,27 @@
+.root {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  padding: 4px 12px;
+  font-size: 14px;
+  border-radius: 24px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  pointer-events: all;
+  opacity: 0;
+  transition: opacity 0.3s;
+
+  &.visible {
+    opacity: 1;
+  }
+}

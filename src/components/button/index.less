@@ -1,0 +1,49 @@
+.button {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: solid 1px #fff;
+  padding: 2px 4px;
+  cursor: pointer;
+  margin: 4px 0;
+  outline: none;
+  border-radius: 4px;
+
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+  &:active,
+  &:focus {
+    background: fade(#fff, 40%);
+  }
+  &[disabled] {
+    opacity: 0.5;
+    &:active,
+    &:focus {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  &.large {
+    padding: 4px 8px;
+    margin: 6px 0;
+  }
+}
+
+.primary {
+  border: solid 1px #aaaaff;
+  background: fade(#aaaaff, 20%);
+}
+
+.error {
+  border: solid 1px #ffaaaa;
+  background: fade(#ffaaaa, 20%);
+
+  &:active,
+  &:focus {
+    background: fade(#ffaaaa, 40%);
+  }
+}
+
+.ghost {
+  background: transparent;
+  border-style: dashed;
+}
