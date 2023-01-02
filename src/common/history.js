@@ -3,6 +3,7 @@ import { createMemoryRouter } from 'react-router';
 import Splash from '../pages/Splash';
 import PlayerChoose from '../pages/player/Choose';
 import PlayerCreate from '../pages/player/Create';
+import Home from '../pages/Home';
 
 export const router = createMemoryRouter(
   [
@@ -17,6 +18,10 @@ export const router = createMemoryRouter(
     {
       path: '/player/create',
       element: <PlayerCreate />,
+    },
+    {
+      path: '/home',
+      element: <Home />,
     },
     // childRoutes: [
     //   require('./Splash').default,

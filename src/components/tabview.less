@@ -1,0 +1,28 @@
+.root {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  height: 32px;
+  flex-direction: row;
+}
+
+.tab {
+  flex: 1;
+  border-bottom: solid 2px transparent;
+
+  &.active {
+    border-color: blue;
+  }
+}
+
+.container {
+  width: 100vw;
+  flex-direction: row;
+  transition: transform 1s;
+}
+.content {
+  width: 100vw;
+}

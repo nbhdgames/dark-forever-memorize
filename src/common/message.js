@@ -94,7 +94,7 @@ export function confirm(message) {
   });
 }
 
-const Prompt = ({ onConfirm, onCancel, defaultValue, children }) => {
+const Prompt = ({ title, onConfirm, onCancel, defaultValue, children }) => {
   const [val, setVal] = useState(defaultValue || '');
 
   const handleConfirm = useCallback(() => {
@@ -119,6 +119,7 @@ const Prompt = ({ onConfirm, onCancel, defaultValue, children }) => {
   return (
     <div className={styles.mask}>
       <div className={styles.modal}>
+        <div className={styles.title}>{title}</div>
         <div className={styles.message}>{children}</div>
         <Input
           autoFocus
@@ -135,12 +136,13 @@ const Prompt = ({ onConfirm, onCancel, defaultValue, children }) => {
   );
 };
 
-export function prompt(message, defaultValue = '') {
+export function prompt(title, message, defaultValue = '') {
   const div = document.createElement('div');
   document.body.appendChild(div);
   return new Promise((resolve) => {
     render(
       <Prompt
+        title={title}
         defaultValue={defaultValue}
         onConfirm={(val) => {
           unmountComponentAtNode(div);

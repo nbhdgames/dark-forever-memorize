@@ -29,17 +29,28 @@ export function TouchableOpacity({
   );
 }
 
-export function ScrollView({ className, children, ...others }) {
+export const ScrollView = React.forwardRef(function ScrollView(
+  { className, children, contentContainerClassName, ...others },
+  ref
+) {
   return (
     <div
       className={classnames(styles.scrollView, className)}
       {...others}
       role="button"
+      ref={ref}
     >
-      <div className={styles.scrollViewContent}>{children}</div>
+      <div
+        className={classnames(
+          styles.scrollViewContent,
+          contentContainerClassName
+        )}
+      >
+        {children}
+      </div>
     </div>
   );
-}
+});
 
 const StaticRender = React.memo(function StaticRender({ render, data }) {
   return render(data);
@@ -70,3 +81,10 @@ ListView.DataSource = class DataSource {
     return [...rows];
   }
 };
+
+export function Switch({ value, onValueChange }) {
+  const handleChange = React.useCallback((ev) => {
+    onValueChange(ev.currentTarget.checked);
+  });
+  return <input type="checkbox" checked={value} onChange={handleChange} />;
+}

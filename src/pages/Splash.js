@@ -23,7 +23,7 @@ export default class Splash extends Component {
         // world.onMapChanged();
         world.resumeGame();
         // world.map = 'home';
-        router.navigate('/home/battle');
+        router.navigate('/home');
         return;
       } catch (err) {
         if (__DEV__) {

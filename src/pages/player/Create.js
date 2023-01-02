@@ -69,7 +69,7 @@ export default class PlayerCreate extends PureComponent {
       world.addPlayer(player);
       world.map = 'home';
       world.resumeGame();
-      router.navigate('/home/battle');
+      router.navigate('/home');
     } catch (err) {
       if (__DEV__) {
         console.warn(err.stack);

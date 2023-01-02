@@ -15,7 +15,7 @@ export default class NavBar extends Component {
     if (this.props.onLeftPressed) {
       this.props.onLeftPressed();
     } else {
-      router.navigate(this.props.back);
+      router.navigate(-1);
     }
   };
   onRightPressed = () => {
