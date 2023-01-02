@@ -7,10 +7,10 @@ import { observer } from 'mobx-react';
 import Progress from './Progress';
 import Cp from './Cp';
 
-export const HpBar = observer(function HpBar({ unit, style }) {
+export const HpBar = observer(function HpBar({ unit, className }) {
   return (
     <Progress
-      style={style}
+      className={className}
       value={unit.hp}
       maxValue={unit.maxHp}
       bgColor="#ddd"
@@ -19,10 +19,10 @@ export const HpBar = observer(function HpBar({ unit, style }) {
   );
 });
 
-export const MpBar = observer(function MpBar({ unit, style }) {
+export const MpBar = observer(function MpBar({ unit, className }) {
   return (
     <Progress
-      style={style}
+      className={className}
       value={unit.mp}
       maxValue={unit.maxMp}
       bgColor="#ddd"
@@ -31,10 +31,10 @@ export const MpBar = observer(function MpBar({ unit, style }) {
   );
 });
 
-export const RpBar = observer(function RpBar({ unit, style }) {
+export const RpBar = observer(function RpBar({ unit, className }) {
   return (
     <Progress
-      style={style}
+      className={className}
       value={unit.rp}
       maxValue={unit.maxRp}
       bgColor="#ddd"
@@ -45,10 +45,10 @@ export const RpBar = observer(function RpBar({ unit, style }) {
 
 const color = '#17FFDA';
 
-export const EpBar = observer(function EpBar({ unit, style }) {
+export const EpBar = observer(function EpBar({ unit, className }) {
   return (
     <Progress
-      style={style}
+      className={className}
       value={unit.ep}
       maxValue={unit.maxEp}
       bgColor="#ddd"
@@ -57,10 +57,10 @@ export const EpBar = observer(function EpBar({ unit, style }) {
   );
 });
 
-export const ExpBar = observer(function ExpBar({ unit, style }) {
+export const ExpBar = observer(function ExpBar({ unit, className }) {
   return (
     <Progress
-      style={style}
+      className={className}
       value={unit.exp}
       maxValue={unit.maxExp}
       bgColor="#ddd"
@@ -69,13 +69,13 @@ export const ExpBar = observer(function ExpBar({ unit, style }) {
   );
 });
 
-export const CastBar = observer(function CastBar({ unit, style }) {
+export const CastBar = observer(function CastBar({ unit, className }) {
   if (!unit.casting && !unit.reading) {
     return null;
   }
   return (
     <Progress
-      style={style}
+      className={className}
       value={unit.castingRest}
       maxValue={unit.castingTime}
       bgColor="#ddd"

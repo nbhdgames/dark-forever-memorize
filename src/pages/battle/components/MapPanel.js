@@ -15,6 +15,8 @@ import game from '../../../logics/game';
 
 import styles from './MapPanel.less';
 import { alert, prompt } from '../../../common/message';
+import { getModalCount, onModalClear } from '../../../common/modal';
+import { checkRequirement } from '../../../logics/check';
 
 const Map = observer(function Map({
   map,
@@ -28,7 +30,7 @@ const Map = observer(function Map({
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      style={[
+      className={[
         styles.option,
         pending && styles.optionPending,
         active && styles.optionActive,
@@ -49,7 +51,7 @@ const Map = observer(function Map({
       }}
     >
       <Text
-        style={[
+        className={[
           styles.label,
           pending && styles.labelPending,
           active && styles.labelActive,
@@ -62,66 +64,6 @@ const Map = observer(function Map({
   );
 });
 
-export function checkRequirement({
-  debug,
-  map,
-  role,
-  career,
-  level,
-  atMostMaxLevel,
-  atLeastMaxLevel,
-  stories,
-  beforeStories,
-  $or,
-  $and,
-} = {}) {
-  const { player } = world;
-  const { storiesMap } = game;
-
-  if (role && (!player || player.role !== role)) {
-    return false;
-  }
-  if (career && (!player || player.currentCareer !== career)) {
-    return false;
-  }
-  if (level && (!player || player.level < level)) {
-    return false;
-  }
-  if (atMostMaxLevel && (!player || player.maxLevel > atMostMaxLevel)) {
-    return false;
-  }
-  if (atLeastMaxLevel && (!player || player.maxLevel < atLeastMaxLevel)) {
-    return false;
-  }
-  if (map && world.map !== map) {
-    return false;
-  }
-  if (stories) {
-    for (const story of stories) {
-      if (storiesMap.get(story) !== 'done') {
-        return false;
-      }
-    }
-  }
-  if (beforeStories) {
-    for (const story of beforeStories) {
-      if (storiesMap.get(story) === 'done') {
-        return false;
-      }
-    }
-  }
-  if ($or) {
-    if (!$or.some(checkRequirement)) {
-      return false;
-    }
-  }
-  if ($and) {
-    if (!$and.every(checkRequirement)) {
-      return false;
-    }
-  }
-  return true;
-}
 function checkStory(v) {
   const { key, requirement } = v;
   const { storiesMap } = game;
@@ -178,11 +120,9 @@ export function onStoryDone(story) {
 
 // 立即检查任务
 export const checkStories = action(function doCheckStories(
-  navigator,
-  checkStoriesLater,
   searchType = 'full'
 ) {
-  if (navigator.getCurrentRoutes().find((v) => v.location === '/story/play')) {
+  if (getModalCount() > 0) {
     return;
   }
   const storiesList = Object.keys(stories).map((k) => stories[k]);
@@ -198,20 +138,20 @@ export const checkStories = action(function doCheckStories(
 
           if (story.script) {
             // 有剧情需要进展
-            navigator.push({
-              location: '/story/play',
-              passProps: {
-                story: story.key,
-                onClose: () => {
-                  m.delete(task);
-                  if (m.size === 0) {
-                    game.enemyTaskMap.delete(enemy);
-                  }
-                  onStoryDone(story);
-                  checkStoriesLater(navigator);
-                },
-              },
-            });
+            // navigator.push({
+            //   location: '/story/play',
+            //   passProps: {
+            //     story: story.key,
+            //     onClose: () => {
+            //       m.delete(task);
+            //       if (m.size === 0) {
+            //         game.enemyTaskMap.delete(enemy);
+            //       }
+            //       onStoryDone(story);
+            //       checkStoriesLater();
+            //     },
+            //   },
+            // });
             return;
           }
 
@@ -264,16 +204,16 @@ export const checkStories = action(function doCheckStories(
           }
         } else if (story.script) {
           // 有剧情需要进展
-          navigator.push({
-            location: '/story/play',
-            passProps: {
-              story: story.key,
-              onClose: () => {
-                onStoryDone(story);
-                checkStoriesLater(navigator);
-              },
-            },
-          });
+          // navigator.push({
+          //   location: '/story/play',
+          //   passProps: {
+          //     story: story.key,
+          //     onClose: () => {
+          //       onStoryDone(story);
+          //       checkStoriesLater();
+          //     },
+          //   },
+          // });
           return;
         } else {
           onStoryDone(story);
@@ -285,10 +225,9 @@ export const checkStories = action(function doCheckStories(
 });
 
 // 在导航事件后再检查任务。
-export function checkStoriesLater(navigator) {
-  const listener = navigator.navigationContext.addListener('didfocus', () => {
-    checkStories(navigator, checkStoriesLater);
-    listener.remove();
+export function checkStoriesLater() {
+  onModalClear(() => {
+    checkStories();
   });
 }
 
@@ -332,7 +271,9 @@ const Dungeon = observer(function Dungeon({ map, onChangeMap, showNoTicket }) {
         return count - pendingCount;
       }}
     >
-      {!showNoTicket && <Text style={styles.cooldownCount}>x{`${count}`}</Text>}
+      {!showNoTicket && (
+        <Text className={styles.cooldownCount}>x{`${count}`}</Text>
+      )}
     </Map>
   );
 });
@@ -385,7 +326,7 @@ export default class MapPanel extends Component {
     if (world.map !== map.key) {
       world.map = map.key;
       world.pendingMaps.splice(0); // 移除所有队列
-      checkStories(this.context.navigator, checkStoriesLater);
+      checkStories();
     }
   };
 
@@ -399,7 +340,7 @@ export default class MapPanel extends Component {
     // 进入地图，同时当前地图作为pending
     world.pendingMaps.push(world.map);
     world.map = map.key;
-    checkStories(this.context.navigator, checkStoriesLater);
+    checkStories();
   };
 
   @action
@@ -473,13 +414,13 @@ export default class MapPanel extends Component {
     }
     const { currentPhase } = enemyBorn;
     return [
-      <View style={styles.section} key="title">
-        <Text style={styles.sectionTitle}>{mapData.name}</Text>
+      <View className={styles.section} key="title">
+        <Text className={styles.sectionTitle}>{mapData.name}</Text>
       </View>,
       ...mapData.phases.map((v, i) => (
-        <View key={`phase_${i}`} style={styles.phase}>
-          <Text style={styles.phaseState}>{currentPhase === i && '>'}</Text>
-          <Text style={styles.phaseLabel}>
+        <View key={`phase_${i}`} className={styles.phase}>
+          <Text className={styles.phaseState}>{currentPhase === i && '>'}</Text>
+          <Text className={styles.phaseLabel}>
             {currentPhase >= i ? mapData.phases[i].description : '???'}
           </Text>
         </View>

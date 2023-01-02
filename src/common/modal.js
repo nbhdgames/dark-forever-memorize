@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './model.less';
+import styles from './modal.less';
 import { render, unmountComponentAtNode } from 'react-dom';
 
 const modalClearCbs = [];
@@ -11,6 +11,10 @@ export function onModalClear(cb) {
     return;
   }
   modalClearCbs.push(cb);
+}
+
+export function getModalCount() {
+  return modalCount;
 }
 
 export function showModal(el) {

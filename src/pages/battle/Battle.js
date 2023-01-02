@@ -66,7 +66,7 @@ export default class Battle extends Component {
 
   onMessage = ({ type }) => {
     if (type === 'battle.death') {
-      checkStories(this.context.navigator, checkStoriesLater);
+      checkStories();
     }
   };
 
@@ -82,17 +82,17 @@ export default class Battle extends Component {
     const { player } = world;
     if (world.paused || !player) {
       return (
-        <View style={[styles.container, styles.centerContainer]}>
+        <View className={[styles.container, styles.centerContainer]}>
           <Text>当你不在的时候，时光依然飞逝。剩余{this.pendingTimeLabel}</Text>
-          <Text style={styles.skipFoward} onPress={this.skipForward}>
+          <Text className={styles.skipFoward} onPress={this.skipForward}>
             我只是想杀杀怪物。。（跳过）
           </Text>
         </View>
       );
     }
     return (
-      <View style={styles.container}>
-        <ScrollableTabView style={styles.container}>
+      <View className={styles.container}>
+        <ScrollableTabView className={styles.container}>
           <UnitPanel tabLabel="单位" />
           {world.units
             .filter((v) => v.player)

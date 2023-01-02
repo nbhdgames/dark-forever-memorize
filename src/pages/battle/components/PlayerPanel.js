@@ -17,7 +17,7 @@ import {
 import styles from './PlayerPanel.less';
 
 function Seperator() {
-  return <View style={styles.seperator} />;
+  return <View className={styles.seperator} />;
 }
 
 @observer
@@ -158,7 +158,7 @@ export default class PlayerPanel extends Component {
               护甲: <IntField unit={unit} field="def" />{' '}
             </Text>
           </View>
-          <View style={styles.column}>
+          <View className={styles.column}>
             <Text>
               每5秒回复生命:{' '}
               <FixedField unit={unit} field="hpRecovery" mul={5} />{' '}

@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import classnames from 'classnames';
 import styles from './index.less';
 
 export * from './button';
 export * from './input';
 
-export function Text({ className, ...others }) {
-  return <span className={classnames(styles.text, className)} {...others} />;
+export function Text({ className, numberOfLines, style, onPress, ...others }) {
+  return (
+    <span
+      className={classnames(
+        styles.text,
+        className,
+        numberOfLines && styles['numberOfLine' + numberOfLines]
+      )}
+      onClick={onPress}
+      {...others}
+    />
+  );
 }
 
 export function View({ className, ...others }) {
@@ -17,32 +27,59 @@ export function TouchableOpacity({
   activeOpacity,
   className,
   onPress,
+  onLongPress,
   ...others
 }) {
+  let state = useMemo(() => ({}));
+
+  const handleMouseDown = useCallback(() => {
+    state.timer = setTimeout(() => {
+      onLongPress();
+    }, 1500);
+  }, [onLongPress]);
+  const HandleMouseUp = useCallback(() => {
+    if (state.timer) {
+      clearTimeout(state.timer);
+      state.timer = null;
+    }
+  }, [onLongPress]);
   return (
     <div
       className={classnames(styles.touchable, className)}
       onClick={onPress}
       {...others}
+      onMouseDown={handleMouseDown}
+      onMouseUp={HandleMouseUp}
       role="button"
     />
   );
 }
 
 export const ScrollView = React.forwardRef(function ScrollView(
-  { className, children, contentContainerClassName, ...others },
+  {
+    className,
+    children,
+    contentContainerClassName,
+    horizontal,
+    bounces = true,
+    ...others
+  },
   ref
 ) {
   return (
     <div
-      className={classnames(styles.scrollView, className)}
+      className={classnames(
+        horizontal ? styles.scrollViewH : styles.scrollView,
+        bounces && styles.bounces,
+        className
+      )}
       {...others}
       role="button"
       ref={ref}
     >
       <div
         className={classnames(
-          styles.scrollViewContent,
+          horizontal ? styles.scrollViewContentH : styles.scrollViewContent,
           contentContainerClassName
         )}
       >

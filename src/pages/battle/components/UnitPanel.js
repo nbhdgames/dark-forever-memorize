@@ -23,29 +23,29 @@ import styles from './UnitPanel.less';
 const Unit = observer(function Unit({ unit }) {
   return (
     <TouchableOpacity
-      style={[styles.unit, styles[camelCase('unit', unit.camp)]]}
+      className={[styles.unit, styles[camelCase('unit', unit.camp)]]}
       onPress={() => world.focusEnemy(unit)}
       activeOpacity={0.8}
     >
       <Field
-        style={styles.name}
+        className={styles.name}
         unit={unit}
         field="displayName"
         numberOfLines={1}
       />
-      <HpBar unit={unit} style={styles.bar} />
-      {unit.maxMp > 0 && <MpBar unit={unit} style={styles.bar} />}
-      {unit.maxRp > 0 && <RpBar unit={unit} style={styles.bar} />}
-      {unit.maxEp > 0 && <EpBar unit={unit} style={styles.bar} />}
+      <HpBar unit={unit} className={styles.bar} />
+      {unit.maxMp > 0 && <MpBar unit={unit} className={styles.bar} />}
+      {unit.maxRp > 0 && <RpBar unit={unit} className={styles.bar} />}
+      {unit.maxEp > 0 && <EpBar unit={unit} className={styles.bar} />}
       {((unit.player && unit.player.currentCareer === 'knight') ||
         unit.runAttrHooks(false, 'displayCpBar')) && <CpBar unit={unit} />}
-      <Text numberOfLines={1} style={styles.target}>
+      <Text numberOfLines={1} className={styles.target}>
         目标：
         <Field unit={unit} field="targetDisplayName" />
       </Text>
-      <View style={styles.spacer} />
-      <Field style={styles.casting} unit={unit} field="castingName" />
-      <CastBar unit={unit} style={styles.bar} />
+      <View className={styles.spacer} />
+      <Field className={styles.casting} unit={unit} field="castingName" />
+      <CastBar unit={unit} className={styles.bar} />
     </TouchableOpacity>
   );
 });
@@ -58,7 +58,7 @@ export default class UnitPanel extends Component {
   componentDidMount() {
     const s = this.scrollRef.current;
     if (s) {
-      s.offsetTop = s.clientHeight - s.offsetHeight;
+      s.scrollTop = s.clientHeight - s.offsetHeight;
     }
   }
   render() {

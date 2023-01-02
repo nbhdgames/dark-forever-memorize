@@ -62,10 +62,10 @@ export const BuildInventory = observer(function BuildInventory({
   const haveSelect = expr(() => selected && selected.get() !== null);
 
   return (
-    <View style={style}>
+    <View className={style}>
       {haveSelect && <GoodDetail selected={selected} />}
-      <View style={styles.row}>
-        <ScrollView horizontal style={styles.inventory}>
+      <View className={styles.row}>
+        <ScrollView horizontal className={styles.inventory}>
           {inventory.map((slot, i) => (
             <InventorySlotComp
               slot={slot}
@@ -76,7 +76,7 @@ export const BuildInventory = observer(function BuildInventory({
         </ScrollView>
         {isEquip && (
           <TouchableOpacity
-            style={styles.inventoryButton}
+            className={styles.inventoryButton}
             onPress={() => decomposeFromBuild(inventory)}
           >
             <Text>分解</Text>
@@ -84,7 +84,7 @@ export const BuildInventory = observer(function BuildInventory({
         )}
         {length > 0 && (
           <TouchableOpacity
-            style={styles.inventoryButton}
+            className={styles.inventoryButton}
             onPress={() => {
               player.getInventory(inventory);
               selected.set(null);

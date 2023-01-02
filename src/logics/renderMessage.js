@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { observable, action } from 'mobx';
+import { observable, action, makeObservable } from 'mobx';
 import camelCase from 'camelcase';
 import message from './message';
 import { qualityStyles } from '../pages/inventory/Inventory';
@@ -51,9 +51,13 @@ class MessageDisplay {
 
   @action
   onMessage = (msg) => {
-    const renderer = this[camelCase('render', msg.type)];
+    const renderer = this[camelCase('render-' + msg.type)];
     if (!renderer) {
-      console.warn(`No renderer for message ${msg.type}`);
+      console.warn(
+        `No renderer for message ${msg.type}: ${camelCase(
+          'render-' + msg.type
+        )}`
+      );
       return;
     }
     const jsx = renderer.call(this, msg);
@@ -77,6 +81,11 @@ class MessageDisplay {
 
   renderGeneral({ message }) {
     return <Text>{message}</Text>;
+  }
+
+  renderMapEnter({ map }) {
+    const mapData = maps[map];
+    return <Text>来到了{mapData.name}</Text>;
   }
 
   renderBattleDodge({ from, to, skill }) {

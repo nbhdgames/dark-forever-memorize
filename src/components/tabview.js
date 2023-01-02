@@ -11,12 +11,14 @@ export function ScrollableTabView({ className, children }) {
         {childArr
           .map((v) => v.props.tabLabel)
           .map((v, i) => (
-            <div>{v}</div>
+            <div key={i}>{v}</div>
           ))}
       </div>
       <div className={styles.container}>
-        {childArr.map((v) => (
-          <div className={styles.content}>{v}</div>
+        {childArr.map((v, i) => (
+          <div className={styles.content} key={i}>
+            {v}
+          </div>
         ))}
       </div>
     </div>

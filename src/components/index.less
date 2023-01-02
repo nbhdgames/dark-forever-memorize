@@ -7,6 +7,22 @@
   display: inline;
 }
 
+.numberOfLine1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* number of lines to show */
+  line-clamp: 1;
+}
+
+.numberOfLine2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* number of lines to show */
+  line-clamp: 2;
+}
+
 .view {
   display: flex;
   position: relative;
@@ -33,4 +49,18 @@
 .scrollViewContent {
   display: flex;
   flex-direction: column;
+}
+
+.scrollViewH {
+  overflow-x: scroll;
+  flex: 1;
+}
+
+.scrollViewContentH {
+  display: flex;
+  flex-direction: row;
+}
+
+.bounce {
+  -webkit-overflow-scrolling: touch;
 }
