@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+import { render, unmountComponentAtNode } from 'react-dom';
 import { Button, Input, TextArea } from '../components';
 import { getCombKeyName } from './combKey';
 import styles from './message.less';
@@ -36,13 +36,12 @@ const Alert = ({ title, onClose, children, buttons }) => {
 export function alert(title, message, buttons) {
   const div = document.createElement('div');
   document.body.appendChild(div);
-  const root = createRoot(div);
   return new Promise((resolve) => {
-    root.render(
+    render(
       <Alert
         title={title}
         onClose={() => {
-          root.unmount();
+          unmountComponentAtNode(div);
           document.body.removeChild(div);
           resolve();
         }}
@@ -51,7 +50,7 @@ export function alert(title, message, buttons) {
         {message}
       </Alert>
     );
-  });
+  }, div);
 }
 
 const Confirm = ({ onConfirm, onCancel, children }) => {
@@ -73,29 +72,26 @@ const Confirm = ({ onConfirm, onCancel, children }) => {
 export function confirm(message) {
   const div = document.createElement('div');
   document.body.appendChild(div);
-  const root = createRoot(div);
-  return (
-    new Promise() <
-    boolean >
-    ((resolve) => {
-      root.render(
-        <Confirm
-          onConfirm={() => {
-            root.unmount();
-            document.body.removeChild(div);
-            resolve(true);
-          }}
-          onCancel={() => {
-            root.unmount();
-            document.body.removeChild(div);
-            resolve(false);
-          }}
-        >
-          {message}
-        </Confirm>
-      );
-    })
-  );
+
+  return new Promise()((resolve) => {
+    render(
+      <Confirm
+        onConfirm={() => {
+          unmountComponentAtNode(div);
+          document.body.removeChild(div);
+          resolve(true);
+        }}
+        onCancel={() => {
+          unmountComponentAtNode(div);
+          document.body.removeChild(div);
+          resolve(false);
+        }}
+      >
+        {message}
+      </Confirm>,
+      div
+    );
+  });
 }
 
 const Prompt = ({ onConfirm, onCancel, defaultValue, children }) => {
@@ -142,30 +138,26 @@ const Prompt = ({ onConfirm, onCancel, defaultValue, children }) => {
 export function prompt(message, defaultValue = '') {
   const div = document.createElement('div');
   document.body.appendChild(div);
-  const root = createRoot(div);
-  return (
-    (new Promise() < string) |
-    (null >
-      ((resolve) => {
-        root.render(
-          <Prompt
-            defaultValue={defaultValue}
-            onConfirm={(val) => {
-              root.unmount();
-              document.body.removeChild(div);
-              resolve(val);
-            }}
-            onCancel={() => {
-              root.unmount();
-              document.body.removeChild(div);
-              resolve(null);
-            }}
-          >
-            {message}
-          </Prompt>
-        );
-      }))
-  );
+  return new Promise((resolve) => {
+    render(
+      <Prompt
+        defaultValue={defaultValue}
+        onConfirm={(val) => {
+          unmountComponentAtNode(div);
+          document.body.removeChild(div);
+          resolve(val);
+        }}
+        onCancel={() => {
+          unmountComponentAtNode(div);
+          document.body.removeChild(div);
+          resolve(null);
+        }}
+      >
+        {message}
+      </Prompt>,
+      div
+    );
+  });
 }
 
 const PromptTextArea = ({ onConfirm, onCancel, defaultValue, children }) => {
@@ -192,28 +184,24 @@ const PromptTextArea = ({ onConfirm, onCancel, defaultValue, children }) => {
 export function promptTextArea(message, defaultValue = '') {
   const div = document.createElement('div');
   document.body.appendChild(div);
-  const root = createRoot(div);
-  return (
-    (new Promise() < string) |
-    (null >
-      ((resolve) => {
-        root.render(
-          <PromptTextArea
-            defaultValue={defaultValue}
-            onConfirm={(val) => {
-              root.unmount();
-              document.body.removeChild(div);
-              resolve(val);
-            }}
-            onCancel={() => {
-              root.unmount();
-              document.body.removeChild(div);
-              resolve(null);
-            }}
-          >
-            {message}
-          </PromptTextArea>
-        );
-      }))
-  );
+  return new Promise((resolve) => {
+    render(
+      <PromptTextArea
+        defaultValue={defaultValue}
+        onConfirm={(val) => {
+          unmountComponentAtNode(div);
+          document.body.removeChild(div);
+          resolve(val);
+        }}
+        onCancel={() => {
+          unmountComponentAtNode(div);
+          document.body.removeChild(div);
+          resolve(null);
+        }}
+      >
+        {message}
+      </PromptTextArea>,
+      div
+    );
+  });
 }
