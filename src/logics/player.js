@@ -5,11 +5,13 @@
 import {
   observable,
   toJS,
-  map,
-  autorunAsync,
+  ObservableMap,
+  autorun,
   action,
   computed,
   isObservableMap,
+  makeObservable,
+  override,
 } from 'mobx';
 import world from './world';
 import game from './game';
@@ -116,6 +118,9 @@ const dungeonLevel = {
 };
 
 export class CareerInfo {
+  constructor() {
+    makeObservable(this);
+  }
   type = '';
 
   @observable exp = 0; // 经验值
@@ -193,6 +198,9 @@ export class CareerInfo {
 }
 
 export class AffixInfo {
+  constructor() {
+    makeObservable(this);
+  }
   @observable key = null;
 
   @observable value = 0;
@@ -249,6 +257,7 @@ export class InventorySlot {
   @observable dungeonKey = null;
 
   constructor(position) {
+    makeObservable(this);
     this.position = position;
   }
 
@@ -477,6 +486,7 @@ export class InventorySlot {
 export class PlayerMeta {
   constructor(key) {
     this.key = key;
+    makeObservable(this);
   }
 
   key = null;
@@ -519,11 +529,17 @@ export class PlayerMeta {
 export default class Player extends PlayerMeta {
   constructor(key) {
     super(key);
+    makeObservable(this);
 
     if (!__TEST__) {
-      this.disposeAutoSave = autorunAsync(() => {
-        this.save();
-      }, 30000);
+      this.disposeAutoSave = autorun(
+        () => {
+          this.save();
+        },
+        {
+          delay: 30000,
+        }
+      );
     }
   }
 
@@ -589,7 +605,7 @@ export default class Player extends PlayerMeta {
     return this.banned || game.banned;
   }
 
-  @observable careers = map();
+  @observable careers = new ObservableMap();
 
   @observable gold = 0; // 金币
 
@@ -597,7 +613,7 @@ export default class Player extends PlayerMeta {
 
   @observable inventoryDiamondLevel = 0; // 通过神力升级背包的次数
 
-  @observable skillExp = map(); // Map<key => { level, exp }>
+  @observable skillExp = new ObservableMap(); // Map<key => { level, exp }>
 
   @observable buildInventory = []; // 锻造/分解空格
 
@@ -606,21 +622,13 @@ export default class Player extends PlayerMeta {
   // @observable
   // map = 'home';   // 所在地图
 
-  @observable migrateMap = map();
+  @observable migrateMap = new ObservableMap();
 
-  @observable lootRule = map();
+  @observable lootRule = new ObservableMap();
 
   @observable minLootLevel = 0;
 
-  @observable dungeonTickets = map();
-
-  @computed
-  get careerName() {
-    if (!this.careerData) {
-      return '';
-    }
-    return this.careerData.name;
-  }
+  @observable dungeonTickets = new ObservableMap();
 
   @computed
   get careerInfo() {
@@ -760,7 +768,7 @@ export default class Player extends PlayerMeta {
     return 10;
   }
 
-  @action
+  @override
   fromJS(v) {
     super.fromJS(v);
 

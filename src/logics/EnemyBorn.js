@@ -1,7 +1,7 @@
 /**
  * Created by tdzl2003 on 2/1/17.
  */
-import { action, observable, autorun, computed } from 'mobx';
+import { action, observable, autorun, computed, makeObservable } from 'mobx';
 import { maps } from '../../data';
 import world from './world';
 import { transformEquipLevel } from './player';
@@ -23,6 +23,7 @@ function randomType(types) {
 
 class Born {
   constructor(timeline, config, savedState) {
+    makeObservable(this);
     this.timeline = timeline;
     this.config = config;
 
@@ -181,6 +182,7 @@ export class DungeonState extends EnemyBorn {
   constructor(timeline, map, savedState) {
     super(timeline, map, savedState);
 
+    makeObservable(this);
     this.switchToPhase(
       savedState ? savedState.currentPhase : 0,
       savedState && savedState.phaseBorn

@@ -2,7 +2,7 @@
  * Created by tdzl2003 on 2/1/17.
  */
 
-import { observable, action } from 'mobx';
+import { makeObservable, observable } from 'mobx';
 import { now } from 'mobx-utils';
 import PrivQueue from './PrivQueue';
 
@@ -19,7 +19,7 @@ const globalTimeline = {
 
 let id = 0;
 // 无累加误差、可集体倍率加速的setTimeout/clearTimeout实现
-module.exports = class TimeLine {
+export default class TimeLine {
   @observable
   rate = 1;
 
@@ -27,6 +27,7 @@ module.exports = class TimeLine {
   paused = false;
 
   constructor(parent = globalTimeline) {
+    makeObservable(this);
     this.tree = new PrivQueue((a, b) => a.at < b.at);
 
     this.parent = parent;
@@ -209,4 +210,4 @@ module.exports = class TimeLine {
     this.isUpdating = false;
     return end - this.current;
   }
-};
+}

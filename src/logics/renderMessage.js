@@ -37,6 +37,7 @@ export const dungeonNames = {
 class MessageDisplay {
   constructor() {
     message.addListener('message', this.onMessage);
+    makeObservable(this);
   }
 
   keyGenerator = 0;

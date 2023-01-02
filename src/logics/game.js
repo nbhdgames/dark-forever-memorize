@@ -2,7 +2,15 @@
  * Created by tdzl2003 on 1/19/17.
  */
 
-import { observable, toJS, map, autorunAsync, computed, action } from 'mobx';
+import {
+  observable,
+  toJS,
+  ObservableMap,
+  computed,
+  action,
+  autorun,
+  makeObservable,
+} from 'mobx';
 import { PlayerMeta, InventorySlot } from './player';
 import world from './world';
 import StatusError from './StatusError';
@@ -82,10 +90,16 @@ const SecretRecord = Record({
 
 class Game {
   constructor() {
+    makeObservable(this);
     if (!__TEST__) {
-      autorunAsync(() => {
-        this.save();
-      }, 1000);
+      autorun(
+        () => {
+          this.save();
+        },
+        {
+          delay: 1000,
+        }
+      );
     }
   }
 
@@ -131,19 +145,19 @@ class Game {
 
   @observable currentPlayer = null;
 
-  @observable playerMetas = map();
+  @observable playerMetas = new ObservableMap();
 
-  @observable storiesMap = map();
+  @observable storiesMap = new ObservableMap();
 
-  @observable enemyTaskMap = map();
+  @observable enemyTaskMap = new ObservableMap();
 
   @observable bank = []; // 银行
 
-  @observable iapMap = map();
+  @observable iapMap = new ObservableMap();
 
-  @observable ticketMap = map();
+  @observable ticketMap = new ObservableMap();
 
-  @observable medicineLevel = map();
+  @observable medicineLevel = new ObservableMap();
 
   @observable medicineExp = 0;
 
@@ -274,7 +288,7 @@ class Game {
     }
     this.enemyTaskMap.clear();
     for (const key of Object.keys(v.enemyTaskMap || {})) {
-      this.enemyTaskMap.set(key, map(v.enemyTaskMap[key]));
+      this.enemyTaskMap.set(key, new ObservableMap(v.enemyTaskMap[key]));
     }
     this.iapMap.clear();
     for (const key of Object.keys(v.iapMap || {})) {
@@ -350,7 +364,7 @@ class Game {
     if (this.enemyTaskMap.has(enemy)) {
       m = this.enemyTaskMap.get(enemy);
     } else {
-      m = map();
+      m = new ObservableMap();
       this.enemyTaskMap.set(enemy, m);
     }
     m.set(story, amount);
@@ -418,7 +432,3 @@ class Game {
 
 const game = new Game();
 export default game;
-
-if (__IOS__) {
-  game.refreshIap();
-}

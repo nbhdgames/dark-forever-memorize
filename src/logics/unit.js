@@ -8,10 +8,11 @@ import {
   action,
   runInAction,
   reaction,
-  map,
-  expr,
+  ObservableMap,
+  makeObservable,
+  override,
 } from 'mobx';
-import { keepAlive } from 'mobx-utils';
+import { expr, keepAlive } from 'mobx-utils';
 import camelCase from 'camelcase';
 import TimeLine from './Timeline';
 import {
@@ -88,6 +89,7 @@ let keyGenerator = 0;
 
 export class SkillState {
   constructor(timeline, unit, type, savedState) {
+    makeObservable(this);
     this.timeline = timeline;
     this.type = type;
     this.unit = unit;
@@ -161,7 +163,7 @@ export class SkillState {
     }
 
     if (skillData.cost) {
-      ['hp', 'mp', 'rp', 'ep', 'comboPoint'].forEach(k => {
+      ['hp', 'mp', 'rp', 'ep', 'comboPoint'].forEach((k) => {
         let cost = skillData.cost[k];
         if (typeof cost === 'function') {
           cost = cost(this.unit);
@@ -213,7 +215,7 @@ export class SkillState {
     }
     if (skillData.cost) {
       if (
-        ['hp', 'mp', 'rp', 'ep', 'comboPoint'].some(k => {
+        ['hp', 'mp', 'rp', 'ep', 'comboPoint'].some((k) => {
           let cost = skillData.cost[k];
           if (typeof cost === 'function') {
             cost = cost(this.unit);
@@ -253,7 +255,7 @@ export class SkillState {
       this.timeline.clearTimeout(this.coolDownTimer);
       this.coolDownTimer = null;
     }
-    for (const unit of world.units.filter(v => v.summonSkill === this)) {
+    for (const unit of world.units.filter((v) => v.summonSkill === this)) {
       unit.kill();
     }
   }
@@ -277,6 +279,7 @@ export class SkillState {
 
 export class BuffState {
   constructor(timeline, unit, type, time, arg, group) {
+    makeObservable(this);
     this.timeline = timeline;
     this.unit = unit;
     this.type = type;
@@ -320,7 +323,7 @@ export class BuffState {
   effect = () => {
     this.effectTimer = this.timeline.setTimeout(
       this.effect,
-      this.effectInterval,
+      this.effectInterval
     );
     runInAction(() => {
       this.buffData.effect.call(this, world);
@@ -414,7 +417,7 @@ export class BuffState {
       buffData.onOver.call(this, world);
     }
     if (this.hookDisposes) {
-      this.hookDisposes.forEach(v => v());
+      this.hookDisposes.forEach((v) => v());
       this.hookDisposes = null;
     }
     if (this.unit.reading === this) {
@@ -442,6 +445,7 @@ let globalCounter = 0;
 
 export class Unit {
   constructor(timeline, savedState) {
+    makeObservable(this);
     this.timeline = new TimeLine(timeline);
     this.disposeUseSkill = reaction(this.canUseSkill, this.tryUseSkill);
     this.disposeSpeed = autorun(() => {
@@ -453,14 +457,14 @@ export class Unit {
         if (target && target.camp === Camps.ghost) {
           this.findTarget();
         }
-      }),
+      })
     );
 
     this.key = keyGenerator += 1;
   }
 
   initKeepAlives() {
-    [keepAlive(this, 'maxHp')].forEach(v => this.keepAlives.push(v));
+    [keepAlive(this, 'maxHp')].forEach((v) => this.keepAlives.push(v));
   }
 
   key = 0;
@@ -533,7 +537,7 @@ export class Unit {
 
   @observable combos = [];
 
-  hooks = map();
+  hooks = new ObservableMap();
 
   // 自动恢复计时器
   recoveryTimer = null;
@@ -636,7 +640,7 @@ export class Unit {
     this.attackCooledDown = false;
     this.attackCoolDownTimer = this.timeline.setTimeout(
       this.onAttackCoolDown,
-      1000 / this.atkSpeed,
+      1000 / this.atkSpeed
     );
   }
 
@@ -653,7 +657,7 @@ export class Unit {
     if (this.runAttrHooks(false, 'stunned')) {
       return null;
     }
-    const ret = this.skills.find(v => v.shouldUse);
+    const ret = this.skills.find((v) => v.shouldUse);
     return ret;
   };
 
@@ -686,7 +690,7 @@ export class Unit {
   }
 
   @action
-  tryUseSkill = skill => {
+  tryUseSkill = (skill) => {
     this.runAttrHooks(skill, 'preskill', world);
 
     if (!this.casting && skill && skill.canUse) {
@@ -773,7 +777,7 @@ export class Unit {
 
   @action
   findTarget() {
-    const targets = world.units.filter(v => this.willAttack(v));
+    const targets = world.units.filter((v) => this.willAttack(v));
     const target = targets[Math.floor(Math.random() * targets.length)];
     this.setTarget(target || null);
   }
@@ -798,7 +802,7 @@ export class Unit {
 
   @action
   removeSkill(type) {
-    const id = this.skills.findIndex(v => v.type === type);
+    const id = this.skills.findIndex((v) => v.type === type);
     const state = this.skills.splice(id, 1);
     state[0].dispose();
   }
@@ -807,7 +811,7 @@ export class Unit {
     if (!this.recoveryTimer) {
       this.recoveryTimer = this.timeline.setTimeout(
         this.recovery,
-        1000 * RECOVERY_RATE,
+        1000 * RECOVERY_RATE
       );
     }
   }
@@ -838,7 +842,7 @@ export class Unit {
   addAttrHook(key, replace) {
     let hooks = this.hooks.get(key);
     if (!hooks) {
-      hooks = map();
+      hooks = new ObservableMap();
       this.hooks.set(key, hooks);
     }
     let id = ++globalCounter;
@@ -864,7 +868,7 @@ export class Unit {
     // ret = this.buffs.reduce((v, buff) => buff.runAttrHook(v, key), ret);
     const hooks = this.hooks.get(key);
     if (hooks) {
-      hooks.values().forEach(v => {
+      hooks.values().forEach((v) => {
         ret = v(ret, ...args);
       });
     }
@@ -874,9 +878,9 @@ export class Unit {
   dispose() {
     this.disposeUseSkill();
     this.disposeSpeed();
-    this.keepAlives.forEach(v => v());
+    this.keepAlives.forEach((v) => v());
     this.keepAlives = [];
-    this.skills.forEach(v => v.dispose());
+    this.skills.forEach((v) => v.dispose());
     this.skills.clear();
 
     const { casting, reading } = this;
@@ -917,7 +921,7 @@ export class Unit {
     if (group) {
       // 有限叠加BUFF，移除超出的多余buff
       const groupBuffs = this.buffs
-        .filter(v => v.group === group)
+        .filter((v) => v.group === group)
         .sort((a, b) => {
           let v = 0;
           if (a.buffData.compBuff) {
@@ -942,7 +946,7 @@ export class Unit {
         type,
         time,
         arg,
-        group,
+        group
       );
       if (!buff.willAppear()) {
         return;
@@ -950,7 +954,7 @@ export class Unit {
       if (replaceBuff) {
         this.removeBuff(replaceBuff);
       }
-      removeBuffs.forEach(v => this.removeBuff(v));
+      removeBuffs.forEach((v) => this.removeBuff(v));
       message.sendBuff(this, type);
       this.buffs.push(buff);
       buff.didAppear();
@@ -963,7 +967,7 @@ export class Unit {
       type,
       time,
       arg,
-      group,
+      group
     );
     if (!buff.willAppear()) {
       return;
@@ -999,7 +1003,7 @@ export class Unit {
       mp: this.mp,
       target: this.target && world.units.indexOf(this.target),
       skills: skills,
-      buffs: this.buffs.map(v => v.dumpState()),
+      buffs: this.buffs.map((v) => v.dumpState()),
       casting: this.casting && this.skills.indexOf(this.casting),
       castingTimer:
         this.casting && this.castingTimer.at - this.timeline.getTime(),
@@ -1055,13 +1059,14 @@ export class Unit {
 export class PlayerUnit extends Unit {
   constructor(timeline, player, savedState) {
     super(timeline, savedState);
+    makeObservable(this);
 
     runInAction(() => {
       this.player = player;
       // 装备词缀加成
       // 这里不计算装备的基础属性，因为尤其是武器的属性 有特别之处。
       // 装备的基础属性在对应的属性入口计算，每个位置有哪些基础属性确定不会更改。
-      ['weapon', 'plastron', 'gaiter', 'ornament'].forEach(position => {
+      ['weapon', 'plastron', 'gaiter', 'ornament'].forEach((position) => {
         let hookDispose = [];
 
         this.autoDisposes.push(
@@ -1077,13 +1082,13 @@ export class PlayerUnit extends Unit {
                   hookDispose.push(
                     this.addAttrHook(
                       key,
-                      hooks[key].bind(this, affixInfo.value),
-                    ),
+                      hooks[key].bind(this, affixInfo.value)
+                    )
                   );
                 }
               }
             }
-          }),
+          })
         );
       });
 
@@ -1095,10 +1100,10 @@ export class PlayerUnit extends Unit {
             for (const dispose of hookDispose.splice(0)) {
               dispose();
             }
-            Object.keys(this.player.careerData.passives).forEach(passive => {
+            Object.keys(this.player.careerData.passives).forEach((passive) => {
               const active = expr(
                 () =>
-                  this.player.careerData.passives[passive] <= this.player.level,
+                  this.player.careerData.passives[passive] <= this.player.level
               );
               if (active) {
                 const passiveData = passives[passive];
@@ -1106,13 +1111,13 @@ export class PlayerUnit extends Unit {
                 if (hooks) {
                   for (const key of Object.keys(hooks)) {
                     hookDispose.push(
-                      this.addAttrHook(key, hooks[key].bind(this, world)),
+                      this.addAttrHook(key, hooks[key].bind(this, world))
                     );
                   }
                 }
               }
             });
-          }),
+          })
         );
       }
 
@@ -1125,17 +1130,17 @@ export class PlayerUnit extends Unit {
               dispose();
             }
 
-            this.player.careerInfo.selectedEnhances.forEach(v => {
+            this.player.careerInfo.selectedEnhances.forEach((v) => {
               const { hooks } = enhances[v];
               if (hooks) {
                 for (const key of Object.keys(hooks)) {
                   hookDispose.push(
-                    this.addAttrHook(key, hooks[key].bind(this, world)),
+                    this.addAttrHook(key, hooks[key].bind(this, world))
                   );
                 }
               }
             });
-          }),
+          })
         );
       }
 
@@ -1169,7 +1174,7 @@ export class PlayerUnit extends Unit {
       if (savedState.rebornTimer) {
         message.sendPlayerDeath(
           this,
-          (savedState.rebornTimer / 1000).toFixed(1),
+          (savedState.rebornTimer / 1000).toFixed(1)
         );
         this.timeline.parent.setTimeout(this.reborn, savedState.rebornTimer);
       } else if (this.camp === Camps.ghost) {
@@ -1177,7 +1182,7 @@ export class PlayerUnit extends Unit {
         message.sendPlayerDeath(this, rebornIn);
         this.rebornTimer = this.timeline.parent.setTimeout(
           this.reborn,
-          rebornIn * 1000,
+          rebornIn * 1000
         );
       }
 
@@ -1190,7 +1195,7 @@ export class PlayerUnit extends Unit {
               buff.time,
               buff.arg,
               buff.group,
-              99999,
+              99999
             );
           }
         }
@@ -1256,7 +1261,7 @@ export class PlayerUnit extends Unit {
       keepAlive(this, 'lightningAbsorb'),
       keepAlive(this, 'mf'),
       keepAlive(this, 'gf'),
-    ].forEach(v => this.keepAlives.push(v));
+    ].forEach((v) => this.keepAlives.push(v));
   }
 
   selectCareer(career) {
@@ -1541,7 +1546,7 @@ export class PlayerUnit extends Unit {
     return ret;
   }
 
-  @computed
+  @override
   get noDodgeRate() {
     let ret = 300 / (300 + this.dex);
     ret = this.runAttrHooks(ret, 'noDodgeRate');
@@ -1650,7 +1655,7 @@ export class PlayerUnit extends Unit {
     return value;
   }
 
-  @action
+  @override
   addSkill(type) {
     const state = new SkillState(this.timeline, this, type);
     state.getLevel = () => this.player.getSkillLevel(type);
@@ -1765,7 +1770,7 @@ export class PlayerUnit extends Unit {
     this.findTarget();
   };
 
-  @action
+  @override
   kill() {
     super.kill();
     world.enemyBorn && world.enemyBorn.onPlayerDeath();
@@ -1774,7 +1779,7 @@ export class PlayerUnit extends Unit {
 
     this.rebornTimer = this.timeline.parent.setTimeout(
       action(this.reborn),
-      rebornIn * 1000,
+      rebornIn * 1000
     );
   }
 
@@ -1820,7 +1825,7 @@ export class PlayerUnit extends Unit {
       new SkillState(this.timeline, this, key, {}),
       world,
       this,
-      this.player.getSkillLevel(key),
+      this.player.getSkillLevel(key)
     );
   }
 }
@@ -1828,6 +1833,7 @@ export class PlayerUnit extends Unit {
 export class EnemyUnit extends Unit {
   constructor(timeline, type, quality, savedState) {
     super(timeline, savedState);
+    makeObservable(this);
 
     this.type = type;
     this.quality = quality;
@@ -1846,13 +1852,13 @@ export class EnemyUnit extends Unit {
       const sum = keys.reduce((a, key) => a + affixes[key], 0);
       let dice = Math.random() * sum;
       this.affixes.push(
-        keys.find(key => {
+        keys.find((key) => {
           dice -= affixes[key];
           if (dice <= 0) {
             return true;
           }
           return false;
-        }),
+        })
       );
     }
 
@@ -1860,7 +1866,7 @@ export class EnemyUnit extends Unit {
     if (this.enemyData.hooks) {
       for (const key in this.enemyData.hooks) {
         this.hookRecords.push(
-          this.addAttrHook(key, this.enemyData.hooks[key].bind(this, world)),
+          this.addAttrHook(key, this.enemyData.hooks[key].bind(this, world))
         );
       }
     }
@@ -1901,7 +1907,7 @@ export class EnemyUnit extends Unit {
                 buff.time,
                 buff.arg,
                 buff.group,
-                99999,
+                99999
               );
             }
           }
@@ -1967,7 +1973,7 @@ export class EnemyUnit extends Unit {
     if (this.enemyData.hooks) {
       for (const key in this.enemyData.hooks) {
         this.hookRecords.push(
-          this.addAttrHook(key, this.enemyData.hooks[key].bind(this, world)),
+          this.addAttrHook(key, this.enemyData.hooks[key].bind(this, world))
         );
       }
     }
@@ -1978,7 +1984,7 @@ export class EnemyUnit extends Unit {
     }
     this.camp = this.enemyData.camp;
     this.findTarget();
-    world.units.forEach(v => {
+    world.units.forEach((v) => {
       if (v.target === null && v.willAttack(this)) {
         v.setTarget(this);
       }
@@ -2010,7 +2016,7 @@ export class EnemyUnit extends Unit {
 
   @computed
   get displayName() {
-    const temp = this.affixes.map(v => enemyAffixes[v].name);
+    const temp = this.affixes.map((v) => enemyAffixes[v].name);
     temp.push(this.name);
     return this.runAttrHooks(temp.join(''), 'displayName');
   }
@@ -2210,7 +2216,7 @@ export class EnemyUnit extends Unit {
     return ret;
   }
 
-  @computed
+  @override
   get speedRate() {
     let ret = this.enemyData.speedRate || 1;
     ret = this.runAttrHooks(ret, 'speedRate');
@@ -2218,23 +2224,23 @@ export class EnemyUnit extends Unit {
     return ret;
   }
 
-  @computed
+  @override
   get stunResist() {
     const realLevel = transformEquipLevel(this.level);
     return this.runAttrHooks(
       this.enemyData.stunResist || realLevel * 10,
-      'stunResist',
+      'stunResist'
     );
   }
 
-  @action
+  @override
   addSkill(type, level, saved) {
     const state = new SkillState(this.timeline, this, type, saved);
     state.getLevel = () => level;
     this.skills.unshift(state);
   }
 
-  @action
+  @override
   kill(shouldWait = true) {
     if (this.runAttrHooks(true, 'willClean', this, world)) {
       this.setCleanTimer(shouldWait ? 3000 : 0);
@@ -2270,7 +2276,7 @@ export class EnemyUnit extends Unit {
     }
   }
 
-  @action
+  @override
   setTarget(target) {
     super.setTarget(target);
     if (this.enemyData.camp === Camps.neutral) {

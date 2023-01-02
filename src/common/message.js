@@ -4,10 +4,11 @@ import { Button, Input, TextArea } from '../components';
 import { getCombKeyName } from './combKey';
 import styles from './message.less';
 
-const Alert = ({ onClose, children }) => {
+const Alert = ({ title, onClose, children }) => {
   return (
     <div className={styles.mask}>
       <div className={styles.modal}>
+        <div className={styles.title}>{title}</div>
         <div className={styles.message}>{children}</div>
         <div className={styles.buttonList}>
           <Button onClick={onClose} autoFocus>
@@ -19,13 +20,14 @@ const Alert = ({ onClose, children }) => {
   );
 };
 
-export function alert(message) {
+export function alert(title, message) {
   const div = document.createElement('div');
   document.body.appendChild(div);
   const root = createRoot(div);
   return new Promise((resolve) => {
     root.render(
       <Alert
+        title={title}
         onClose={() => {
           root.unmount();
           document.body.removeChild(div);

@@ -1,5 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const { DefinePlugin } = require('webpack');
 
 module.exports = (_, argv) => {
   const __DEV__ = argv.mode === 'development';
@@ -51,9 +52,17 @@ module.exports = (_, argv) => {
             'less-loader',
           ],
         },
+        {
+          test: /\.png$/,
+          use: ['url-loader'],
+        },
       ],
     },
     plugins: [
+      new DefinePlugin({
+        __DEV__: JSON.stringify(__DEV__),
+        __TEST__: 'false',
+      }),
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, './src/index.html'),
       }),

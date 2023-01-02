@@ -1,7 +1,7 @@
 /**
  * Created by tdzl2003 on 2/1/17.
  */
-import { observable, computed, action } from 'mobx';
+import { observable, computed, action, makeObservable } from 'mobx';
 import { EventEmitter } from 'fbemitter';
 
 import Timeline from './Timeline';
@@ -182,6 +182,7 @@ class World extends EventEmitter {
 
   constructor() {
     super();
+    makeObservable(this);
     if (__DEV__) {
       this.timeline.setRate(DEBUG_RATE);
     }

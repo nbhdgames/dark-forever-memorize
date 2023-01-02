@@ -4,7 +4,6 @@
 
 import { AffixInfo, InventorySlot } from './player';
 import { goods, legends, affixes } from '../../data';
-import { getClientIdSync } from './network/clientId';
 
 export function randomAffixValue(old, level) {
   return new AffixInfo().fromJS({
@@ -15,13 +14,13 @@ export function randomAffixValue(old, level) {
 }
 
 export function randomAffixes(config, level, blacklist) {
-  const keys = config.filter(k => !blacklist[k]);
+  const keys = config.filter((k) => !blacklist[k]);
   const totalWeight = keys.reduce(
     (v, key) => v + (affixes[key].weight || 1),
-    0,
+    0
   );
   let dice = Math.random() * totalWeight;
-  const result = keys.find(key => {
+  const result = keys.find((key) => {
     const weight = affixes[key].weight || 1;
     if (dice < weight) {
       return true;
@@ -66,11 +65,11 @@ export function isValidAffix(key, affix, level) {
 
 const specialRate = __DEV__
   ? 1
-  : Object.keys(legends).filter(v => !legends[v].special).length / 100;
+  : Object.keys(legends).filter((v) => !legends[v].special).length / 100;
 
 export function generateEquip(key, level, quality, legendType) {
-  const validAffixes = Object.keys(affixes).filter(affix =>
-    isValidAffix(key, affix, level),
+  const validAffixes = Object.keys(affixes).filter((affix) =>
+    isValidAffix(key, affix, level)
   );
 
   const generatedAffixes = [];
@@ -85,7 +84,7 @@ export function generateEquip(key, level, quality, legendType) {
       new AffixInfo().fromJS({
         key: legendType,
         value: legends[legendType].generate(level),
-      }),
+      })
     );
   }
 
@@ -101,22 +100,22 @@ export function generateEquip(key, level, quality, legendType) {
 
 const baseQualityRate = [1, 0.5, 0.05, 0.005, 0.0005, 0];
 
-const equips = Object.keys(goods).filter(key => goods[key].type === 'equip');
+const equips = Object.keys(goods).filter((key) => goods[key].type === 'equip');
 
 export function randomEquip(level, mfRate, position) {
   const dice = Math.random() / mfRate;
-  const quality = Math.max(0, baseQualityRate.findIndex(v => v < dice) - 1);
+  const quality = Math.max(0, baseQualityRate.findIndex((v) => v < dice) - 1);
 
   let legendType = null;
 
   if (quality === 4) {
     if (Math.random() < specialRate) {
       const validLegends = Object.keys(legends).filter(
-        key =>
+        (key) =>
           !legends[key].special &&
           (legends[key].minLevel || 0) <= level &&
           (legends[key].maxLevel || level) >= level &&
-          (!position || goods[legends[key].type].position === position),
+          (!position || goods[legends[key].type].position === position)
       );
       legendType =
         validLegends[(Math.random() * validLegends.length) | 0] || null;
@@ -126,7 +125,7 @@ export function randomEquip(level, mfRate, position) {
   if (legendType) {
     return generateEquip(legends[legendType].type, level, quality, legendType);
   }
-  const validEquips = equips.filter(key => {
+  const validEquips = equips.filter((key) => {
     return (
       (goods[key].minLevel || 0) <= level &&
       (goods[key].maxLevel || level) >= level &&
