@@ -17,6 +17,7 @@ import StatusError from './StatusError';
 import { stories, medicines } from '../../data';
 import { Record } from 'immutable';
 import { jws, b64utos } from 'jsrsasign';
+import { preSave } from '../common/utils';
 
 const SECRET = 'chapter5.woodElf';
 
@@ -145,19 +146,19 @@ class Game {
 
   @observable currentPlayer = null;
 
-  @observable playerMetas = new ObservableMap();
+  @observable playerMetas = observable.map();
 
-  @observable storiesMap = new ObservableMap();
+  @observable storiesMap = observable.map();
 
-  @observable enemyTaskMap = new ObservableMap();
+  @observable enemyTaskMap = observable.map();
 
   @observable bank = []; // 银行
 
-  @observable iapMap = new ObservableMap();
+  @observable iapMap = observable.map();
 
-  @observable ticketMap = new ObservableMap();
+  @observable ticketMap = observable.map();
 
-  @observable medicineLevel = new ObservableMap();
+  @observable medicineLevel = observable.map();
 
   @observable medicineExp = 0;
 
@@ -288,7 +289,7 @@ class Game {
     }
     this.enemyTaskMap.clear();
     for (const key of Object.keys(v.enemyTaskMap || {})) {
-      this.enemyTaskMap.set(key, new ObservableMap(v.enemyTaskMap[key]));
+      this.enemyTaskMap.set(key, observable.map(v.enemyTaskMap[key]));
     }
     this.iapMap.clear();
     for (const key of Object.keys(v.iapMap || {})) {
@@ -324,20 +325,22 @@ class Game {
       return;
     }
 
-    //localStorage.setItem('game', JSON.stringify(toJS(this, false)));
-    // await AsyncStorage.setItem('game', world.stop(toJS(this, false)));
-    localStorage.setItem(
-      'game',
-      jws.JWS.sign(
-        null,
-        {
-          alg: 'HS256',
-          typ: 'JWT',
-        },
-        toJS(this, false),
-        SECRET
-      )
-    );
+    if (__DEV__) {
+      localStorage.setItem('game', JSON.stringify(preSave(this.toJS())));
+    } else {
+      localStorage.setItem(
+        'game',
+        jws.JWS.sign(
+          null,
+          {
+            alg: 'HS256',
+            typ: 'JWT',
+          },
+          toJS(this, false),
+          SECRET
+        )
+      );
+    }
     if (__DEV__) {
       console.log('Game info saved.');
     }
@@ -364,7 +367,7 @@ class Game {
     if (this.enemyTaskMap.has(enemy)) {
       m = this.enemyTaskMap.get(enemy);
     } else {
-      m = new ObservableMap();
+      m = observable.map();
       this.enemyTaskMap.set(enemy, m);
     }
     m.set(story, amount);

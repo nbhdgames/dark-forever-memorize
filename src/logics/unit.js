@@ -537,7 +537,7 @@ export class Unit {
 
   @observable combos = [];
 
-  hooks = new ObservableMap();
+  hooks = observable.map();
 
   // 自动恢复计时器
   recoveryTimer = null;
@@ -842,7 +842,7 @@ export class Unit {
   addAttrHook(key, replace) {
     let hooks = this.hooks.get(key);
     if (!hooks) {
-      hooks = new ObservableMap();
+      hooks = observable.map();
       this.hooks.set(key, hooks);
     }
     let id = ++globalCounter;
@@ -868,9 +868,9 @@ export class Unit {
     // ret = this.buffs.reduce((v, buff) => buff.runAttrHook(v, key), ret);
     const hooks = this.hooks.get(key);
     if (hooks) {
-      hooks.values().forEach((v) => {
+      for (const v of hooks.values()) {
         ret = v(ret, ...args);
-      });
+      }
     }
     return ret;
   }

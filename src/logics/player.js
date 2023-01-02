@@ -25,6 +25,7 @@ import {
   maps,
 } from '../../data';
 import doMigrates from './migrates';
+import { preSave } from '../common/utils';
 
 const MAX_TICKET_STACK = 20;
 
@@ -605,7 +606,7 @@ export default class Player extends PlayerMeta {
     return this.banned || game.banned;
   }
 
-  @observable careers = new ObservableMap();
+  @observable careers = observable.map();
 
   @observable gold = 0; // 金币
 
@@ -613,7 +614,7 @@ export default class Player extends PlayerMeta {
 
   @observable inventoryDiamondLevel = 0; // 通过神力升级背包的次数
 
-  @observable skillExp = new ObservableMap(); // Map<key => { level, exp }>
+  @observable skillExp = observable.map(); // Map<key => { level, exp }>
 
   @observable buildInventory = []; // 锻造/分解空格
 
@@ -622,13 +623,13 @@ export default class Player extends PlayerMeta {
   // @observable
   // map = 'home';   // 所在地图
 
-  @observable migrateMap = new ObservableMap();
+  @observable migrateMap = observable.map();
 
-  @observable lootRule = new ObservableMap();
+  @observable lootRule = observable.map();
 
   @observable minLootLevel = 0;
 
-  @observable dungeonTickets = new ObservableMap();
+  @observable dungeonTickets = observable.map();
 
   @computed
   get careerInfo() {
@@ -1064,13 +1065,16 @@ export default class Player extends PlayerMeta {
       meta.fromJS(this);
 
       // 保存详细存档
-      const js = this.toJS();
+      const js = preSave(this.toJS());
 
       if (!withoutWorldState) {
         js.worldState = world.dumpState();
       }
       js.timestamp = Date.now() - world.pendingTime;
-      localStorage.setItem(`player-${this.key}`, world.stop(js));
+      localStorage.setItem(
+        `player-${this.key}`,
+        __DEV__ ? JSON.stringify(js) : world.stop(js)
+      );
       if (__DEV__) {
         console.log(`Player ${this.roleData.name} saved.`);
       }

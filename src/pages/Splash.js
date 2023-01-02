@@ -26,8 +26,9 @@ export default class Splash extends Component {
         router.navigate('/home/battle');
         return;
       } catch (err) {
-        mgn.debug(err.message);
-        mgn.debug(err.stack);
+        if (__DEV__) {
+          console.warn(err.stack);
+        }
         world.dispose();
         game.currentPlayer = null;
         alert(

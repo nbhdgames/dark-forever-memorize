@@ -4,23 +4,36 @@ import { Button, Input, TextArea } from '../components';
 import { getCombKeyName } from './combKey';
 import styles from './message.less';
 
-const Alert = ({ title, onClose, children }) => {
+const Alert = ({ title, onClose, children, buttons }) => {
   return (
     <div className={styles.mask}>
       <div className={styles.modal}>
         <div className={styles.title}>{title}</div>
         <div className={styles.message}>{children}</div>
         <div className={styles.buttonList}>
-          <Button onClick={onClose} autoFocus>
-            确定
-          </Button>
+          {!buttons && (
+            <div
+              className={styles.button}
+              onClick={onClose}
+              autoFocus
+              role="button"
+            >
+              确定
+            </div>
+          )}
+          {buttons &&
+            buttons.map((v) => (
+              <div className={styles.button} onClick={v.onPress} role="button">
+                {v.text}
+              </div>
+            ))}
         </div>
       </div>
     </div>
   );
 };
 
-export function alert(title, message) {
+export function alert(title, message, buttons) {
   const div = document.createElement('div');
   document.body.appendChild(div);
   const root = createRoot(div);
@@ -33,6 +46,7 @@ export function alert(title, message) {
           document.body.removeChild(div);
           resolve();
         }}
+        buttons={buttons}
       >
         {message}
       </Alert>

@@ -1,46 +1,38 @@
 /**
  * Created by tdzl2003 on 12/18/16.
  */
-import { makeObservable, observable } from 'mobx';
-import { observer } from 'mobx-react';
 import React, { Component } from 'react';
 
-import { View, Image, TouchableOpacity, Text } from '../components';
-import { Outlet } from 'react-router';
+import { View, TouchableOpacity, Text } from '../components';
 import styles from './NavBar.less';
 import { router } from '../common/history';
 
-export class NavBarStore {
-  @observable
-  leftNavTitle = null;
-  @observable
-  rightNavTitle = null;
-  @observable
-  title = null;
-  @observable
-  back = null;
-
-  childrenRef = null;
-
-  constructor() {
-    makeObservable(this);
-  }
-}
-
-export const navbarStore = new NavBarStore();
-
-@observer
 export default class NavBar extends Component {
+  state = {
+    leftNavTitle: null,
+    title: null,
+    rightNavTitle: null,
+  };
+  componentDidMount() {
+    this.setState({
+      leftNavTitle: this.props.leftNavTitle,
+      title: this.props.title,
+      rightNavTitle: this.props.rightNavTitle,
+    });
+  }
+  getRef = (ref) => {
+    this.childrenRef = ref;
+  };
   onLeftPressed = () => {
-    if (navbarStore.childrenRef && navbarStore.childrenRef.onLeftPressed) {
-      navbarStore.childrenRef.onLeftPressed();
+    if (this.childrenRef && this.childrenRef.onLeftPressed) {
+      this.childrenRef.onLeftPressed();
     } else {
-      router.navigate(navbarStore.back);
+      router.navigate(this.props.back);
     }
   };
   onRightPressed = () => {
-    if (navbarStore.childrenRef && navbarStore.childrenRef.onRightPressed) {
-      navbarStore.childrenRef.onRightPressed();
+    if (this.childrenRef && this.childrenRef.onRightPressed) {
+      this.childrenRef.onRightPressed();
     }
   };
   renderBack() {
@@ -51,29 +43,32 @@ export default class NavBar extends Component {
     );
   }
   render() {
+    const { children, back } = this.props;
+    const { leftNavTitle, rightNavTitle, title } = this.state;
+
     return (
       <View className={styles.container}>
         <View className={styles.navBar}>
-          <Text className={styles.title}>{navbarStore.title}</Text>
-          {!!navbarStore.back && this.renderBack()}
-          {!!navbarStore.leftNavTitle && (
+          <Text className={styles.title}>{title}</Text>
+          {!!back && this.renderBack()}
+          {!!leftNavTitle && (
             <TouchableOpacity
               className={styles.left}
               onPress={this.onLeftPressed}
             >
-              <Text className={styles.button}>{navbarStore.leftNavTitle}</Text>
+              <Text className={styles.button}>{leftNavTitle}</Text>
             </TouchableOpacity>
           )}
-          {!!navbarStore.rightNavTitle && (
+          {!!rightNavTitle && (
             <TouchableOpacity
               className={styles.right}
               onPress={this.onRightPressed}
             >
-              <Text className={styles.button}>{navbarStore.rightNavTitle}</Text>
+              <Text className={styles.button}>{rightNavTitle}</Text>
             </TouchableOpacity>
           )}
         </View>
-        <Outlet />
+        {React.cloneElement(children, { ref: this.getRef, navBar: this })}
       </View>
     );
   }

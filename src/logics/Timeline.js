@@ -7,8 +7,8 @@ import { now } from 'mobx-utils';
 import PrivQueue from './PrivQueue';
 
 const globalTimeline = {
-  setTimeout: global.setTimeout,
-  clearTimeout: global.clearTimeout,
+  setTimeout: (v, t) => window.setTimeout(v, t),
+  clearTimeout: (v) => window.clearTimeout(v),
   getTime: () => Date.now(),
   tryUpdate: () => {},
 

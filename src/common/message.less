@@ -44,16 +44,24 @@
 .modal {
   border-radius: 4px;
   margin: 0 40px;
-  padding: 12px 20px;
-  background-color: #433;
-  border: solid 1px lighten(#433, 30%);
-  color: white;
+  padding: 12px 20px 0;
+  background-color: #fff;
+  color: black;
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  min-width: 200px;
+}
+
+.title {
+  text-align: center;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 8px;
 }
 
 .message {
+  font-size: 14px;
   margin-bottom: 4px;
   text-align: center;
   white-space: pre-line;
@@ -64,8 +72,19 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+  border-top: solid 1px #ccc;
+  margin-left: -20px;
+  margin-right: -20px;
 
   > button + button {
     margin-left: 8px;
   }
+}
+
+.button {
+  flex: 1;
+  color: #218bff;
+  line-height: 48px;
+  height: 48px;
+  text-align: center;
 }
