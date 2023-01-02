@@ -8,31 +8,19 @@ import styles from './NavBar.less';
 import { router } from '../common/history';
 
 export default class NavBar extends Component {
-  state = {
-    leftNavTitle: null,
-    title: null,
-    rightNavTitle: null,
-  };
-  componentDidMount() {
-    this.setState({
-      leftNavTitle: this.props.leftNavTitle,
-      title: this.props.title,
-      rightNavTitle: this.props.rightNavTitle,
-    });
-  }
   getRef = (ref) => {
     this.childrenRef = ref;
   };
   onLeftPressed = () => {
-    if (this.childrenRef && this.childrenRef.onLeftPressed) {
-      this.childrenRef.onLeftPressed();
+    if (this.props.onLeftPressed) {
+      this.props.onLeftPressed();
     } else {
       router.navigate(this.props.back);
     }
   };
   onRightPressed = () => {
-    if (this.childrenRef && this.childrenRef.onRightPressed) {
-      this.childrenRef.onRightPressed();
+    if (this.props.onRightPressed) {
+      this.props.onRightPressed();
     }
   };
   renderBack() {
@@ -43,8 +31,7 @@ export default class NavBar extends Component {
     );
   }
   render() {
-    const { children, back } = this.props;
-    const { leftNavTitle, rightNavTitle, title } = this.state;
+    const { children, back, leftNavTitle, rightNavTitle, title } = this.props;
 
     return (
       <View className={styles.container}>
@@ -68,7 +55,7 @@ export default class NavBar extends Component {
             </TouchableOpacity>
           )}
         </View>
-        {React.cloneElement(children, { ref: this.getRef, navBar: this })}
+        {children}
       </View>
     );
   }

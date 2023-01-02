@@ -15,6 +15,7 @@ import { alert } from '../../common/message';
 import { checkRequirement } from '../../logics/check';
 import { boxObjectField } from '../../common/utils';
 import { router } from '../../common/history';
+import NavBar from '../NavBar';
 
 function Group({ title, children }) {
   return (
@@ -60,7 +61,7 @@ export default class PlayerCreate extends PureComponent {
 
   roleField = boxObjectField(this.form, 'role');
 
-  async onRightPressed() {
+  onRightPressed = async () => {
     try {
       const player = await Player.create(this.form);
 
@@ -82,27 +83,38 @@ export default class PlayerCreate extends PureComponent {
           break;
       }
     }
-  }
+  };
 
   render() {
     return (
-      <View className={styles.container}>
-        <OptionGroup title="角色" target={this.roleField} field="role">
-          {Object.keys(roles)
-            .filter(
-              (k) =>
-                !roles[k].requirement || checkRequirement(roles[k].requirement)
-            )
-            .map((k) => (
-              <Option key={k} value={k}>
-                {roles[k].name}
-              </Option>
-            ))}
-        </OptionGroup>
-        <Group title="角色介绍">
-          <Text className={styles.body}>{this.form.roleData.description}</Text>
-        </Group>
-      </View>
+      <NavBar
+        key="/player/create"
+        title="新游戏"
+        onRightPressed={this.onRightPressed}
+        rightNavTitle="开始游戏"
+        back="/player/choose"
+      >
+        <View className={styles.container}>
+          <OptionGroup title="角色" target={this.roleField} field="role">
+            {Object.keys(roles)
+              .filter(
+                (k) =>
+                  !roles[k].requirement ||
+                  checkRequirement(roles[k].requirement)
+              )
+              .map((k) => (
+                <Option key={k} value={k}>
+                  {roles[k].name}
+                </Option>
+              ))}
+          </OptionGroup>
+          <Group title="角色介绍">
+            <Text className={styles.body}>
+              {this.form.roleData.description}
+            </Text>
+          </Group>
+        </View>
+      </NavBar>
     );
   }
 }

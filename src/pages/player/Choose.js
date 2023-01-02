@@ -2,15 +2,15 @@
  * Created by tdzl2003 on 12/18/16.
  */
 
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import { View, Text, TouchableOpacity, ListView } from '../../components';
-import { observable } from 'mobx';
+import { action, autorun, observable } from 'mobx';
 import { observer } from 'mobx-react';
 
 import game from '../../logics/game';
 import Player from '../../logics/player';
 import world from '../../logics/world';
-
+import NavBar from '../NavBar';
 import styles from './Choose.less';
 import { alert } from '../../common/message';
 import { router } from '../../common/history';
@@ -107,22 +107,19 @@ function Footer({ children, onPress }) {
 
 @observer
 export default class PlayerChoose extends Component {
-  static title = '选择存档';
-  static rightNavTitle = '编辑';
+  refNavBar = createRef();
 
-  editing = observable(false);
+  editing = observable.box(false);
 
-  entering = observable(false);
+  entering = observable.box(false);
 
-  onRightPressed() {
+  onRightPressed = action(() => {
     if (this.editing.get()) {
       this.editing.set(false);
-      this.props.navBar.setState({ rightNavTitle: '编辑' });
     } else {
       this.editing.set(true);
-      this.props.navBar.setState({ rightNavTitle: '完成' });
     }
-  }
+  });
 
   ds = new ListView.DataSource({
     // 只比较对象,剩下的让ChooseItem自己去管
@@ -178,17 +175,24 @@ export default class PlayerChoose extends Component {
 
   render() {
     return (
-      <ListView
-        enableEmptySections
-        className={styles.container}
-        dataSource={this.ds.cloneWithRows(game.playerMetas.entries())}
-        renderRow={this.renderRow}
-        renderFooter={
-          game.playerMetas.size < game.playerSlotCount
-            ? this.renderFooter
-            : this.renderPurchase
-        }
-      />
+      <NavBar
+        title="选择存档"
+        rightNavTitle={this.editing.get() ? '完成' : '编辑'}
+        ref={this.refNavBar}
+        onRightPressed={this.onRightPressed}
+      >
+        <ListView
+          enableEmptySections
+          className={styles.container}
+          dataSource={this.ds.cloneWithRows(game.playerMetas.entries())}
+          renderRow={this.renderRow}
+          renderFooter={
+            game.playerMetas.size < game.playerSlotCount
+              ? this.renderFooter
+              : this.renderPurchase
+          }
+        />
+      </NavBar>
     );
   }
 }
