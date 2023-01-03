@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from '../../components';
-import { observable } from 'mobx';
+import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { InventorySlotComp, Button } from '../inventory/Inventory';
 import world from '../../logics/world';
@@ -30,10 +30,11 @@ export default class Enchants extends Component {
     return this.renderRow(world.player.equipments[pos], pos);
   }
 
+  @action
   selectItem(v) {
     this.selectedItem.set(v);
     if (v) {
-      this.locks.replace(v.affixes.map((v) => false));
+      this.locks.splice(0, null, ...v.affixes.map((v) => false));
     } else {
       this.locks.splice(0);
     }
@@ -132,14 +133,14 @@ export default class Enchants extends Component {
       );
     }
     return (
-      <View style={styles.row}>
-        <ScrollView style={styles.container} horizontal>
+      <View className={styles.row}>
+        <ScrollView className={styles.container} horizontal>
           {Object.keys(costs).map((k, i) => (
-            <Text style={styles.costItem} key={i}>
-              <Text style={styles.materialName} numberOfLines={1}>
+            <Text className={styles.costItem} key={i}>
+              <Text className={styles.materialName} numberOfLines={1}>
                 {predefinedName[k] || goods[k].name}
               </Text>
-              <Text style={styles.materialAmount} numberOfLines={1}>
+              <Text className={styles.materialAmount} numberOfLines={1}>
                 x{costs[k]}
               </Text>
             </Text>
@@ -148,7 +149,7 @@ export default class Enchants extends Component {
         <Button onPress={this.doEnchants} disabled={!enough}>
           {slot.count > 1 && '全部'}附魔
         </Button>
-        <View style={{ width: 5 }} />
+        <View className={{ width: 5 }} />
       </View>
     );
   }
@@ -156,17 +157,17 @@ export default class Enchants extends Component {
   renderDetail() {
     const slot = this.selectedItem.get();
     if (!slot || slot.quality === 0) {
-      return <View style={styles.detailContainer} />;
+      return <View className={styles.detailContainer} />;
     }
     return (
-      <View style={styles.detailContainer}>
+      <View className={styles.detailContainer}>
         <TouchableOpacity
-          style={[styles.detail, styles.detail2]}
+          className={[styles.detail, styles.detail2]}
           onPress={this.discardEnchants}
         >
           {slot.affixes.map((v, i) => (
             <Text
-              style={[styles.affix, v.isLegend && styles.legend]}
+              className={[styles.affix, v.isLegend && styles.legend]}
               key={i}
               numberOfLines={1}
             >
@@ -174,10 +175,10 @@ export default class Enchants extends Component {
             </Text>
           ))}
         </TouchableOpacity>
-        <View style={styles.locks}>
+        <View className={styles.locks}>
           {this.locks.map((v, i) => (
             <Text
-              style={styles.lock}
+              className={styles.lock}
               key={i}
               onPress={() => {
                 if (
@@ -193,10 +194,10 @@ export default class Enchants extends Component {
             </Text>
           ))}
         </View>
-        <TouchableOpacity style={styles.detail} onPress={this.saveEnchants}>
+        <TouchableOpacity className={styles.detail} onPress={this.saveEnchants}>
           {this.newAffixes.map((v, i) => (
             <Text
-              style={[styles.affix, v.isLegend && styles.legend]}
+              className={[styles.affix, v.isLegend && styles.legend]}
               key={i}
               numberOfLines={1}
             >
@@ -212,10 +213,10 @@ export default class Enchants extends Component {
     const { player } = world;
 
     return (
-      <View style={styles.container}>
-        <View style={styles.row}>
+      <View className={styles.container}>
+        <View className={styles.row}>
           <Text>{player.name}的装备</Text>
-          <ScrollView contentContainerStyle={styles.rowCenter} horizontal>
+          <ScrollView contentContainerClassName={styles.rowCenter} horizontal>
             {this.renderEquip('weapon')}
             {this.renderEquip('plastron')}
             {this.renderEquip('gaiter')}
@@ -223,8 +224,8 @@ export default class Enchants extends Component {
           </ScrollView>
         </View>
         <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.content}
+          className={styles.container}
+          contentContainerClassName={styles.content}
         >
           {player.inventory
             .filter((v) => v.isEquip && v.quality > 0)

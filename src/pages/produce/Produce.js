@@ -16,6 +16,7 @@ import Enchants from './Enchants';
 import Rebuild from './Rebuild';
 import Medicine from './Medicine';
 import styles from './Produce.less';
+import NavBar from '../NavBar';
 
 export function hasEnough({ diamonds, gold, ...materials }) {
   const { player } = world;
@@ -100,26 +101,26 @@ export const BuildInventory = observer(function BuildInventory({
 
 @observer
 export default class Produces extends Component {
-  static title = '生产';
-
   selectedItem = observable(null);
 
   render() {
     const { player } = world;
 
     return (
-      <View className={styles.container}>
-        <ScrollableTabView className={styles.container}>
-          <Enchants tabLabel="附魔" />
-          <Rebuild tabLabel="重铸" />
-          <Medicine tabLabel="炼金" />
-          <Decompose tabLabel="分解" />
-        </ScrollableTabView>
-        <BuildInventory
-          selected={this.selectedItem}
-          inventory={player.buildInventory}
-        />
-      </View>
+      <NavBar title="生产">
+        <View className={styles.container}>
+          <ScrollableTabView className={styles.container}>
+            <Enchants tabLabel="附魔" />
+            <Rebuild tabLabel="重铸" />
+            <Medicine tabLabel="炼金" />
+            <Decompose tabLabel="分解" />
+          </ScrollableTabView>
+          <BuildInventory
+            selected={this.selectedItem}
+            inventory={player.buildInventory}
+          />
+        </View>
+      </NavBar>
     );
   }
 }

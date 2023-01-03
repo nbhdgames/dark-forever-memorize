@@ -20,11 +20,11 @@ export default class Medicine extends Component {
     const restLevel = game.totalMedicineLevel - level;
 
     return (
-      <View style={styles.medicine} key={key}>
-        <View style={styles.flex}>
-          <View style={styles.medicineMain}>
-            <Text style={styles.medicineName}>{data.name}</Text>
-            <Text style={styles.textMargin}>等级：{level}</Text>
+      <View className={styles.medicine} key={key}>
+        <View className={styles.flex}>
+          <View className={styles.medicineMain}>
+            <Text className={styles.medicineName}>{data.name}</Text>
+            <Text className={styles.textMargin}>等级：{level}</Text>
           </View>
           <Text>{data.description(level)}</Text>
           <Text>下一级：{data.description(level + 1)}</Text>
@@ -267,9 +267,9 @@ export default class Medicine extends Component {
     const energyItems = player.inventory.filter((v) => v.isEnergyMaterial);
 
     return (
-      <View style={styles.flex}>
-        <View style={styles.info}>
-          <View style={styles.flex}>
+      <View className={styles.flex}>
+        <View className={styles.info}>
+          <View className={styles.flex}>
             <Text>
               坩埚等级：{game.bowelLevel}级 效果：
               {(game.bowelEffect * 100).toFixed()}%
@@ -281,10 +281,10 @@ export default class Medicine extends Component {
           </View>
           <Button onPress={this.upgradeBowel}>升级</Button>
         </View>
-        <ScrollView style={styles.flex}>
+        <ScrollView className={styles.flex}>
           {Object.keys(medicines).map(this.renderMedicine)}
         </ScrollView>
-        <View horizontal style={styles.itemGroup}>
+        <View className={styles.itemGroup}>
           {energyItems.map((slot, i) => (
             <InventorySlotComp
               slot={slot}
@@ -293,7 +293,7 @@ export default class Medicine extends Component {
             />
           ))}
           {energyItems.length === 0 && (
-            <Text style={styles.noItemHint}>
+            <Text className={styles.noItemHint}>
               您的包裹里现在没有任何可以投入的材料
             </Text>
           )}

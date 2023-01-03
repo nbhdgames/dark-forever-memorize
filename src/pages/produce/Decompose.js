@@ -69,17 +69,17 @@ const Decompose = observer(function Decompose() {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.row}>
-        <Text style={styles.container}>不提示分解高品质物品</Text>
+    <View className={styles.container}>
+      <View className={styles.row}>
+        <Text className={styles.container}>不提示分解高品质物品</Text>
         <Switch
           onValueChange={(value) => noNotice.set(value)}
           value={noNotice.get()}
         />
       </View>
       <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.content}
+        className={styles.container}
+        contentContainerClassName={styles.content}
       >
         {player.inventory
           .filter((v) => v.isEquip && v.quality > 0 && !v.locked)

@@ -10,6 +10,7 @@ import LootRule from '../pages/inventory/LootRule';
 import Bank from '../pages/inventory/Bank';
 import Enhances from '../pages/career/Enhances';
 import CareerChoose from '../pages/career/Choose';
+import StoryPurchaseList from '../pages/stories/Purchase';
 
 export const router = createMemoryRouter(
   [
@@ -52,6 +53,10 @@ export const router = createMemoryRouter(
     {
       path: '/story/annoucement',
       element: <Annoucement />,
+    },
+    {
+      path: '/story/purchase',
+      element: <StoryPurchaseList />,
     },
     // childRoutes: [
     //   require('./Splash').default,

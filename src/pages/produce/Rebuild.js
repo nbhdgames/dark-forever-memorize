@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from '../../components';
-import { observable } from 'mobx';
+import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { InventorySlotComp, qualityStyles } from '../inventory/Inventory';
 import world from '../../logics/world';
@@ -23,6 +23,7 @@ export default class Rebuild extends Component {
     return this.renderRow(world.player.equipments[pos], pos);
   }
 
+  @action
   selectItem(v) {
     this.selectedItem.set(v);
   }
@@ -59,24 +60,25 @@ export default class Rebuild extends Component {
 
     return (
       <View>
-        <View style={styles.row}>
+        <View className={styles.row}>
           {Object.keys(costs).map((k, i) => (
-            <Text style={styles.costItem} key={i}>
-              <Text style={styles.materialName} numberOfLines={1}>
+            <Text className={styles.costItem} key={i}>
+              <Text className={styles.materialName} numberOfLines={1}>
                 消耗{predefinedName[k] || goods[k].name}
               </Text>
-              <Text style={styles.materialAmount} numberOfLines={1}>
+              <Text className={styles.materialAmount} numberOfLines={1}>
                 {costs[k]}/{game.diamonds}
               </Text>
             </Text>
           ))}
-          <View style={styles.container} />
+          <View className={styles.container} />
           <Text>点击属性重铸</Text>
         </View>
       </View>
     );
   }
 
+  @action
   rebuild(i) {
     const now = Date.now();
     if (now - this.lastUsedAt < 1000) {
@@ -100,18 +102,18 @@ export default class Rebuild extends Component {
 
   renderAffix(affix, i, haveRebuilded) {
     if (!affix) {
-      return <View style={[styles.detailAffix, styles.detailAffixEmpty]} />;
+      return <View className={[styles.detailAffix, styles.detailAffixEmpty]} />;
     }
 
     const disabled = (haveRebuilded && !affix.rebuilded) || affix.isLegend;
     return (
       <TouchableOpacity
-        style={[styles.detailAffix, disabled && styles.detailAffixDisabled]}
+        className={[styles.detailAffix, disabled && styles.detailAffixDisabled]}
         onPress={() => this.rebuild(i)}
         disabled={disabled || !hasEnough(this.getCosts())}
       >
         <Text
-          style={[styles.affix, affix.isLegend && styles.legendAffix]}
+          className={[styles.affix, affix.isLegend && styles.legendAffix]}
           key={i}
           numberOfLines={1}
         >
@@ -124,14 +126,14 @@ export default class Rebuild extends Component {
   renderDetail() {
     const slot = this.selectedItem.get();
     if (!slot || slot.quality === 0) {
-      return <View style={styles.detailContainer} />;
+      return <View className={styles.detailContainer} />;
     }
     const haveRebuilded = slot.affixes.some((v) => v.rebuilded);
 
     return (
-      <View style={styles.detailContainer}>
-        <View style={[styles.detail, qualityStyles[slot.quality]]}>
-          <View style={styles.detailRow}>
+      <View className={styles.detailContainer}>
+        <View className={[styles.detail, qualityStyles[slot.quality]]}>
+          <View className={styles.detailRow}>
             {this.renderAffix(
               slot.affixes.length > 0 && slot.affixes[0],
               0,
@@ -143,7 +145,7 @@ export default class Rebuild extends Component {
               haveRebuilded
             )}
           </View>
-          <View style={styles.detailRow}>
+          <View className={styles.detailRow}>
             {this.renderAffix(
               slot.affixes.length > 2 && slot.affixes[2],
               2,
@@ -164,10 +166,10 @@ export default class Rebuild extends Component {
     const { player } = world;
 
     return (
-      <View style={styles.container}>
-        <View style={styles.row}>
+      <View className={styles.container}>
+        <View className={styles.row}>
           <Text>{player.name}的装备</Text>
-          <ScrollView contentContainerStyle={styles.rowCenter} horizontal>
+          <ScrollView contentContainerClassName={styles.rowCenter} horizontal>
             {this.renderEquip('weapon')}
             {this.renderEquip('plastron')}
             {this.renderEquip('gaiter')}
@@ -175,8 +177,8 @@ export default class Rebuild extends Component {
           </ScrollView>
         </View>
         <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.content}
+          className={styles.container}
+          contentContainerClassName={styles.content}
         >
           {player.inventory
             .filter((v) => v.isEquip && v.quality > 0)

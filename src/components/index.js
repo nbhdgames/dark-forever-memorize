@@ -120,9 +120,13 @@ export function ListView({
     <ScrollView {...others}>
       {dataSource &&
         dataSource.map((v) => (
-          <StaticRender render={renderRow} data={v} key={v[0]}></StaticRender>
+          <StaticRender
+            render={renderRow}
+            data={v}
+            key={v.key || v[0]}
+          ></StaticRender>
         ))}
-      <StaticRender render={renderFooter} />
+      {renderFooter && <StaticRender render={renderFooter} />}
     </ScrollView>
   );
 }
