@@ -4,6 +4,7 @@ import Splash from '../pages/Splash';
 import PlayerChoose from '../pages/player/Choose';
 import PlayerCreate from '../pages/player/Create';
 import Home from '../pages/Home';
+import Annoucement from '../pages/stories/Annoucement';
 
 export const router = createMemoryRouter(
   [
@@ -22,6 +23,10 @@ export const router = createMemoryRouter(
     {
       path: '/home',
       element: <Home />,
+    },
+    {
+      path: '/story/annoucement',
+      element: <Annoucement />,
     },
     // childRoutes: [
     //   require('./Splash').default,

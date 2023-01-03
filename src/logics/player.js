@@ -12,6 +12,7 @@ import {
   isObservableMap,
   makeObservable,
   override,
+  runInAction,
 } from 'mobx';
 import world from './world';
 import game from './game';
@@ -574,26 +575,27 @@ export default class Player extends PlayerMeta {
     return ret;
   }
 
-  @action
-  static async create(meta, i = 0) {
-    game.checkCanCreate();
+  static create(meta, i = 0) {
+    return runInAction(() => {
+      game.checkCanCreate();
 
-    const key = `${Date.now()}-${i}`;
-    if (game.playerMetas.has(key)) {
-      // 防止key重复
-      return Player.create(meta, i + 1);
-    }
-    meta.key = key;
-    game.playerMetas.set(key, meta);
-    const player = new Player(key);
-    game.currentPlayer = key;
-    player.fromJS(meta);
-    player.postCreate();
+      const key = `${Date.now()}-${i}`;
+      if (game.playerMetas.has(key)) {
+        // 防止key重复
+        return Player.create(meta, i + 1);
+      }
+      meta.key = key;
+      game.playerMetas.set(key, meta);
+      const player = new Player(key);
+      game.currentPlayer = key;
+      player.fromJS(meta);
+      player.postCreate();
 
-    player.save(true);
-    game.save();
+      player.save(true);
+      game.save();
 
-    return player;
+      return player;
+    });
   }
 
   @observable timestamp = 0;

@@ -10,7 +10,9 @@ div.className = styles.root;
 document.body.appendChild(div);
 render(<App />, div);
 
-window.addEventListener('beforeunload', () => {
-  game.save();
-  world.player?.save();
-});
+if (!__DEV__) {
+  window.addEventListener('beforeunload', () => {
+    game.save();
+    world.player?.save();
+  });
+}

@@ -68,6 +68,9 @@ export default class TimeLine {
   }
 
   setTimeout(func, delay) {
+    if (isNaN(delay)) {
+      throw new Error('Invalid delay.');
+    }
     this.tryUpdate();
     const timer = {
       id: ++id,

@@ -16,6 +16,7 @@ import { checkRequirement } from '../../logics/check';
 import { boxObjectField } from '../../common/utils';
 import { router } from '../../common/history';
 import NavBar from '../NavBar';
+import { runInAction } from 'mobx';
 
 function Group({ title, children }) {
   return (
@@ -63,12 +64,14 @@ export default class PlayerCreate extends PureComponent {
 
   onRightPressed = async () => {
     try {
-      const player = await Player.create(this.form);
+      runInAction(() => {
+        const player = Player.create(this.form);
 
-      world.resetTimeline();
-      world.addPlayer(player);
-      world.map = 'home';
-      world.resumeGame();
+        world.resetTimeline();
+        world.addPlayer(player);
+        world.map = 'home';
+        world.resumeGame();
+      });
       router.navigate('/home');
     } catch (err) {
       if (__DEV__) {

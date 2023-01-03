@@ -49,8 +49,7 @@ class MessageDisplay {
     this.rendered.clear();
   }
 
-  @action
-  onMessage = (msg) => {
+  onMessage = action((msg) => {
     const renderer = this[camelCase('render-' + msg.type)];
     if (!renderer) {
       console.warn(
@@ -77,7 +76,7 @@ class MessageDisplay {
     if (this.rendered.length > 1000) {
       this.rendered.shift();
     }
-  };
+  });
 
   renderGeneral({ message }) {
     return <Text>{message}</Text>;

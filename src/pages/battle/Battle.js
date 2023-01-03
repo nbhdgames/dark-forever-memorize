@@ -31,13 +31,12 @@ export default class Battle extends Component {
     if (game.lastVersion !== annoucement.version) {
       game.lastVersion = annoucement.version;
       setTimeout(() => {
-        // this.context.navigator.push({
-        //   location: '/story/annoucement',
-        // });
+        router.navigate('/story/annoucement');
       }, 1000);
+      return;
     }
     checkStoriesLater();
-    this.dispose = message.addListener('message');
+    this.dispose = message.addListener('message', this.onMessage);
   }
   componentWillUnmount() {
     this.dispose.remove();

@@ -1153,7 +1153,7 @@ export class PlayerUnit extends Unit {
             for (const key of Object.keys(hooks)) {
               this.addAttrHook(key, (...args) => {
                 return hooks[key].apply(this, [
-                  game.medicineLevel.get(type),
+                  game.medicineLevel.get(type) || 0,
                   ...args,
                 ]);
               });
