@@ -7,8 +7,6 @@ export default {
   childRoutes: [
     require('./Play').default,
     require('./Purchase').default,
-    require('./GM').default,
-    require('./Possess').default,
     require('./Annoucement').default,
-  ].map(v => v.routeConfig || v),
+  ].map((v) => v.routeConfig || v),
 };

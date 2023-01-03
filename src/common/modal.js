@@ -3,7 +3,7 @@ import styles from './modal.less';
 import { render, unmountComponentAtNode } from 'react-dom';
 
 const modalClearCbs = [];
-const modalCount = 0;
+let modalCount = 0;
 
 export function onModalClear(cb) {
   if (modalCount == 0) {
@@ -22,10 +22,11 @@ export function showModal(el) {
   const div = document.createElement('div');
   div.className = styles.root;
   document.body.appendChild(div);
+  const originOnDismiss = el.props.onDismiss;
   render(
-    div,
     React.cloneElement(el, {
       onDismiss: () => {
+        originOnDismiss && originOnDismiss();
         unmountComponentAtNode(div);
         document.body.removeChild(div);
         if (--modalCount == 0) {
@@ -34,6 +35,7 @@ export function showModal(el) {
           }
         }
       },
-    })
+    }),
+    div
   );
 }

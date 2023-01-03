@@ -1,0 +1,50 @@
+.container {
+  flex: 1;
+}
+
+.content {
+  position: absolute;
+  bottom: 10px;
+  left: 5px;
+  right: 5px;
+  height: 120px;
+  background-color: white;
+  border-radius: 5px;
+  padding: 5px;
+  overflow: hidden;
+}
+
+.name {
+  font-size: 20px;
+}
+.text {
+  font-size: 20px;
+  line-height: 25px;
+  overflow: visible;
+}
+
+.scene {
+  margin-top: 80px;
+  align-self: center;
+  padding: 10px;
+  background-color: white;
+  border-radius: 10px;
+  transition: opacity 0.5s;
+  opacity: 1;
+  &.hidden {
+    opacity: 0;
+  }
+}
+
+.sceneLabel {
+  font-size: 36px;
+}
+
+.back {
+  position: absolute;
+  right: 20px;
+  top: 35px;
+}
+.backLabel {
+  color: white;
+}

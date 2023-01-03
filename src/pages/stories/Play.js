@@ -1,70 +1,14 @@
 /**
  * Created by tdzl2003 on 2/18/17.
  */
-import React, { PropTypes, Component } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  LayoutAnimation,
-  TouchableOpacity,
-} from 'react-native';
+import React, { Component } from 'react';
+import { View, Text, ScrollView, TouchableOpacity } from '../../components';
+import * as classnames from 'classnames';
+import { makeObservable, observable, runInAction } from 'mobx';
+import { observer } from 'mobx-react';
 
-import { observable } from 'mobx';
-import { observer } from 'mobx-react/native';
-
-import route from '../../utils/routerDecorator';
 import { stories } from '../../../data';
-import { StorySceneConfig } from '../../SceneConfig';
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    position: 'absolute',
-    bottom: 10,
-    left: 5,
-    right: 5,
-    height: 120,
-    backgroundColor: 'white',
-    borderRadius: 5,
-    padding: 5,
-    overflow: 'hidden',
-  },
-  name: {
-    fontSize: 20,
-    fontFamily: 'STHeitiSC-Light',
-  },
-  text: {
-    fontSize: 20,
-    lineHeight: 25,
-    fontFamily: 'STHeitiSC-Light',
-  },
-  scene: {
-    marginTop: 80,
-    alignSelf: 'center',
-    padding: 10,
-    backgroundColor: 'white',
-    borderRadius: 10,
-  },
-  sceneLabel: {
-    fontSize: 36,
-    fontFamily: 'STHeitiSC-Light',
-  },
-  back: {
-    position: 'absolute',
-    right: 20,
-    top: 35,
-  },
-  backLabel: {
-    color: 'white',
-  },
-});
-
-const sceneAnimation = LayoutAnimation.create(500, LayoutAnimation.Types.easeInEaseOut, LayoutAnimation.Properties.opacity);
+import styles from './Play.less';
 
 function parseStory(key) {
   const { script } = stories[key];
@@ -73,7 +17,7 @@ function parseStory(key) {
   const result = [];
 
   let i = 0;
-  for ( ; i < lines.length; i++ ) {
+  for (; i < lines.length; i++) {
     const pieces = lines[i].trim().split(' ');
     if (pieces.length <= 0 || !pieces[0]) {
       continue;
@@ -97,18 +41,8 @@ function parseStory(key) {
   return result;
 }
 
-@route('play')
 @observer
 export default class Player extends Component {
-  static hideNavBar = true;
-  static sceneConfig = StorySceneConfig;
-
-  static contextTypes = {
-    navigator: PropTypes.object,
-  };
-
-  storyData = parseStory(this.props.story);
-
   @observable
   scenePanel = null;
 
@@ -117,75 +51,81 @@ export default class Player extends Component {
 
   eventKey = 0;
 
-  contentTop = 0;
+  constructor() {
+    super();
+    makeObservable(this);
+  }
 
   componentDidMount() {
     this.play();
   }
 
   async play() {
-    for (const data of this.storyData) {
+    const storyData = parseStory(this.props.story);
+    for (const data of storyData) {
       await this[data.type](...data.args);
     }
-    this.props.onClose && this.props.onClose();
-    this.context.navigator.pop();
+    this.props.onDismiss?.();
   }
 
   aside(content) {
     return this.say(null, content);
   }
 
-  onScrollViewLayout = ({nativeEvent:{layout:{height}}}) =>{
-    this.scrollViewHeight = height;
-  };
-
   onScrollViewRef = (ref) => {
     this.scrollView = ref;
   };
 
-  onTextLayout = ({nativeEvent:{layout:{ height }}}) => {
-    this.textHeight = height;
-  };
-
   async say(name, content) {
     this.contentTop = 0;
-    this.content = (
-      <View style={styles.content} key={++this.eventKey}>
-        {name && <Text style={styles.name}>[{name}]</Text>}
-        <ScrollView
-          style={styles.textContainer} onLayout={this.onScrollViewLayout}
-          ref={this.onScrollViewRef}
-        >
-          <Text style={styles.text} onLayout={this.onTextLayout}>
-            {content}
-          </Text>
-        </ScrollView>
-      </View>
-    );
+    runInAction(() => {
+      this.content = (
+        <View className={styles.content} key={++this.eventKey}>
+          {name && <Text className={styles.name}>[{name}]</Text>}
+          <View className={styles.textContainer} ref={this.onScrollViewRef}>
+            <Text className={styles.text}>{content}</Text>
+          </View>
+        </View>
+      );
+    });
     // 自动翻页
+    let contentTop = 0;
     for (;;) {
       await this.waitPress();
-      if (this.contentTop + this.scrollViewHeight < this.textHeight) {
-        this.contentTop += name ? 50 : 75;
-        this.scrollView.scrollTo({ y: this.contentTop });
+      const scroll = this.scrollView;
+      if (!scroll) {
+        break;
+      }
+      const textHeight = scroll.scrollHeight;
+      const scrollViewHeight = scroll.offsetHeight;
+      if (contentTop + scrollViewHeight < textHeight) {
+        contentTop += name ? 50 : 75;
+        this.scrollView.scrollTop = contentTop;
       } else {
         break;
       }
     }
-    this.content = null;
+    runInAction(() => {
+      this.content = null;
+    });
   }
 
   async scene(name) {
     if (this.scenePanel) {
-      LayoutAnimation.configureNext(sceneAnimation);
-      this.scenePanel = null;
+      this.scenePanel = (
+        <View
+          className={classnames(styles.scene, styles.hidden)}
+          key={++this.eventKey}
+        >
+          <Text className={styles.sceneLabel}>{name}</Text>
+        </View>
+      );
       await this.wait(500);
     }
     if (name) {
-      LayoutAnimation.configureNext(sceneAnimation);
       this.scenePanel = (
-        <View style={styles.scene} key={++this.eventKey}>
-          <Text style={styles.sceneLabel}>{name}</Text>
+        <View className={styles.scene} key={++this.eventKey}>
+          <Text className={styles.sceneLabel}>{name}</Text>
         </View>
       );
     }
@@ -204,7 +144,7 @@ export default class Player extends Component {
   onPressResolve = null;
 
   waitPress() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.onPressResolve = resolve;
     });
   }
@@ -218,21 +158,18 @@ export default class Player extends Component {
   };
 
   back = () => {
-    this.props.onClose && this.props.onClose();
-    this.context.navigator.pop();
+    this.props.onDismiss?.();
   };
 
   render() {
     return (
-      <TouchableWithoutFeedback onPress={this.onPress}>
-        <View style={styles.container} >
-          {this.scenePanel}
-          {this.content}
-          <TouchableOpacity style={styles.back} onPress={this.back}>
-            <Text style={styles.backLabel}>跳过&gt;&gt;</Text>
-          </TouchableOpacity>
-        </View>
-      </TouchableWithoutFeedback>
+      <View className={styles.container} onClick={this.onPress}>
+        {this.scenePanel}
+        {this.content}
+        <TouchableOpacity className={styles.back} onPress={this.back}>
+          <Text className={styles.backLabel}>跳过&gt;&gt;</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 }

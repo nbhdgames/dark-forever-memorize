@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, forwardRef } from 'react';
 import classnames from 'classnames';
 import styles from './index.less';
 
@@ -19,9 +19,11 @@ export function Text({ className, numberOfLines, style, onPress, ...others }) {
   );
 }
 
-export function View({ className, ...others }) {
-  return <div className={classnames(styles.view, className)} {...others} />;
-}
+export const View = forwardRef(function ({ className, ...others }, ref) {
+  return (
+    <div ref={ref} className={classnames(styles.view, className)} {...others} />
+  );
+});
 
 export function TouchableOpacity({
   activeOpacity,

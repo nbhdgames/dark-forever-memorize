@@ -39,7 +39,9 @@ export default class Battle extends Component {
     this.dispose = message.addListener('message', this.onMessage);
   }
   componentWillUnmount() {
-    this.dispose.remove();
+    if (this.dispose) {
+      this.dispose.remove();
+    }
   }
   onLeftPressed = action(() => {
     if (world.player) {

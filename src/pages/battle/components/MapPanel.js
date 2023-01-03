@@ -15,8 +15,9 @@ import game from '../../../logics/game';
 
 import styles from './MapPanel.less';
 import { alert, prompt } from '../../../common/message';
-import { getModalCount, onModalClear } from '../../../common/modal';
+import { getModalCount, onModalClear, showModal } from '../../../common/modal';
 import { checkRequirement } from '../../../logics/check';
+import Player from '../../stories/Play';
 
 const Map = observer(function Map({
   map,
@@ -138,20 +139,19 @@ export const checkStories = action(function doCheckStories(
 
           if (story.script) {
             // 有剧情需要进展
-            // navigator.push({
-            //   location: '/story/play',
-            //   passProps: {
-            //     story: story.key,
-            //     onClose: () => {
-            //       m.delete(task);
-            //       if (m.size === 0) {
-            //         game.enemyTaskMap.delete(enemy);
-            //       }
-            //       onStoryDone(story);
-            //       checkStoriesLater();
-            //     },
-            //   },
-            // });
+            showModal(
+              <Player
+                story={story.key}
+                onDismiss={() => {
+                  m.delete(task);
+                  if (m.size === 0) {
+                    game.enemyTaskMap.delete(enemy);
+                  }
+                  onStoryDone(story);
+                  checkStoriesLater();
+                }}
+              />
+            );
             return;
           }
 
@@ -204,16 +204,15 @@ export const checkStories = action(function doCheckStories(
           }
         } else if (story.script) {
           // 有剧情需要进展
-          // navigator.push({
-          //   location: '/story/play',
-          //   passProps: {
-          //     story: story.key,
-          //     onClose: () => {
-          //       onStoryDone(story);
-          //       checkStoriesLater();
-          //     },
-          //   },
-          // });
+          showModal(
+            <Player
+              story={story.key}
+              onDismiss={() => {
+                onStoryDone(story);
+                checkStoriesLater();
+              }}
+            />
+          );
           return;
         } else {
           onStoryDone(story);

@@ -2,7 +2,7 @@
  * Created by tdzl2003 on 2/1/17.
  */
 
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 
 import { View, Text, ScrollView, TouchableOpacity } from '../../../components';
 import { observer } from 'mobx-react';
@@ -51,16 +51,36 @@ const Unit = observer(function Unit({ unit }) {
 });
 
 @observer
-export default class UnitPanel extends Component {
+class MessageList extends PureComponent {
   scrollRef = React.createRef();
-  renderUnit = (unit) => <Unit unit={unit} key={unit.key} />;
-  on;
   componentDidMount() {
     const s = this.scrollRef.current;
     if (s) {
-      s.scrollTop = s.clientHeight - s.offsetHeight;
+      s.scrollTop = s.scrollHeight - s.offsetHeight;
     }
   }
+  componentDidUpdate() {
+    const s = this.scrollRef.current;
+    if (s) {
+      s.scrollTop = s.scrollHeight - s.offsetHeight;
+    }
+  }
+  render() {
+    return (
+      <ScrollView
+        className={styles.messageList}
+        contentContainerClassName={styles.content}
+        ref={this.scrollRef}
+      >
+        {renderMessage.rendered.slice(-200).map((v) => v.jsx)}
+      </ScrollView>
+    );
+  }
+}
+
+@observer
+export default class UnitPanel extends Component {
+  renderUnit = (unit) => <Unit unit={unit} key={unit.key} />;
   render() {
     return (
       <View className={styles.container}>
@@ -71,13 +91,7 @@ export default class UnitPanel extends Component {
         >
           {world.units.map(this.renderUnit)}
         </ScrollView>
-        <ScrollView
-          className={styles.messageList}
-          contentContainerClassName={styles.content}
-          ref={this.scrollRef}
-        >
-          {renderMessage.rendered.slice(-200).map((v) => v.jsx)}
-        </ScrollView>
+        <MessageList />
       </View>
     );
   }
