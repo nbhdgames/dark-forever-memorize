@@ -4,7 +4,6 @@
 
 import React, { Component } from 'react';
 import { View, TouchableOpacity, Text } from '../components';
-import world from '../logics/world';
 import styles from './TabBar.less';
 
 export default class TabBar extends Component {

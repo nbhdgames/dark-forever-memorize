@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from '../../components';
-import { observable, action } from 'mobx';
+import { observable, action, runInAction } from 'mobx';
 import { observer } from 'mobx-react';
 import { IntField } from '../../components/Field';
 import world from '../../logics/world';
@@ -229,17 +229,19 @@ export const GoodDetail = observer(function GoodDetail(
               onPress={async () => {
                 if (slot.count > 1) {
                   const v = await prompt('输入数量', '', `${slot.count}`);
-                  const { count } = selected.get();
-                  const tmp = Math.max(0, v | 0);
-                  if (count === tmp) {
-                    selected.set(null);
-                    world.player.sellItem(slot, tmp);
-                  } else if (count > tmp) {
-                    world.player.sellItem(slot, tmp);
-                  } else if (count < tmp) {
-                    alert('别逗我啦。');
-                    return false;
-                  }
+                  runInAction(() => {
+                    const { count } = selected.get();
+                    const tmp = Math.max(0, v | 0);
+                    if (count === tmp) {
+                      selected.set(null);
+                      world.player.sellItem(slot, tmp);
+                    } else if (count > tmp) {
+                      world.player.sellItem(slot, tmp);
+                    } else if (count < tmp) {
+                      alert('别逗我啦。');
+                      return false;
+                    }
+                  });
                 } else if (slot.quality >= 3) {
                   alert(
                     '提示',
@@ -248,16 +250,20 @@ export const GoodDetail = observer(function GoodDetail(
                       {
                         text: '确认',
                         onPress: () => {
-                          selected.set(null);
-                          world.player.sellItem(slot, 1);
+                          runInAction(() => {
+                            selected.set(null);
+                            world.player.sellItem(slot, 1);
+                          });
                         },
                       },
                       { text: '取消' },
                     ]
                   );
                 } else {
-                  selected.set(null);
-                  world.player.sellItem(slot, 1);
+                  runInAction(() => {
+                    selected.set(null);
+                    world.player.sellItem(slot, 1);
+                  });
                 }
               }}
             >
@@ -309,17 +315,19 @@ export const GoodDetail = observer(function GoodDetail(
                 onPress={async () => {
                   if (slot.count > 1) {
                     const v = await prompt('输入数量', '', `${slot.count}`);
-                    const { count } = selected.get();
-                    const tmp = Math.max(0, v | 0);
-                    if (count === tmp) {
-                      selected.set(null);
-                      world.player.sellItem(slot, tmp);
-                    } else if (count > tmp) {
-                      world.player.sellItem(slot, tmp);
-                    } else if (count < tmp) {
-                      alert('别逗我啦。');
-                      return false;
-                    }
+                    runInAction(() => {
+                      const { count } = selected.get();
+                      const tmp = Math.max(0, v | 0);
+                      if (count === tmp) {
+                        selected.set(null);
+                        world.player.sellItem(slot, tmp);
+                      } else if (count > tmp) {
+                        world.player.sellItem(slot, tmp);
+                      } else if (count < tmp) {
+                        alert('别逗我啦。');
+                        return false;
+                      }
+                    });
                   } else if (slot.quality >= 3) {
                     alert(
                       '提示',
@@ -330,16 +338,20 @@ export const GoodDetail = observer(function GoodDetail(
                         {
                           text: '确认',
                           onPress: () => {
-                            selected.set(null);
-                            world.player.sellItem(slot, 1);
+                            runInAction(() => {
+                              selected.set(null);
+                              world.player.sellItem(slot, 1);
+                            });
                           },
                         },
                         { text: '取消' },
                       ]
                     );
                   } else {
-                    selected.set(null);
-                    world.player.sellItem(slot, 1);
+                    runInAction(() => {
+                      selected.set(null);
+                      world.player.sellItem(slot, 1);
+                    });
                   }
                 }}
               >

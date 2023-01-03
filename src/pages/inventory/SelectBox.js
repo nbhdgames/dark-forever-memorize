@@ -23,7 +23,7 @@ export default class SelectBox extends Component {
         key={i}
       >
         <Text
-          className={(styles.label, this.state.active == i && styles.active)}
+          className={[styles.label, this.state.active == i && styles.active]}
         >
           {v}
         </Text>

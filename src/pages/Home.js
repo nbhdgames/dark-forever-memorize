@@ -4,10 +4,12 @@ import Battle from './battle/Battle';
 import Inventory from './inventory/Inventory';
 import { observer } from 'mobx-react';
 import { action, observable } from 'mobx';
+import Skills from './career/Skills';
 
 const children = {
   battle: <Battle />,
   inventory: <Inventory />,
+  skills: <Skills />,
 };
 
 const activeObservable = observable.box('battle');

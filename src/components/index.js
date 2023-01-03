@@ -91,7 +91,6 @@ export const ScrollView = React.forwardRef(function ScrollView(
         className
       )}
       {...others}
-      role="button"
       ref={ref}
     >
       <div

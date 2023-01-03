@@ -8,6 +8,8 @@ import Annoucement from '../pages/stories/Annoucement';
 import Purchase from '../pages/Purchase';
 import LootRule from '../pages/inventory/LootRule';
 import Bank from '../pages/inventory/Bank';
+import Enhances from '../pages/career/Enhances';
+import CareerChoose from '../pages/career/Choose';
 
 export const router = createMemoryRouter(
   [
@@ -34,6 +36,14 @@ export const router = createMemoryRouter(
     {
       path: '/inventory/bank',
       element: <Bank />,
+    },
+    {
+      path: '/career/enhances',
+      element: <Enhances />,
+    },
+    {
+      path: '/career/choose',
+      element: <CareerChoose />,
     },
     {
       path: '/purchase',
