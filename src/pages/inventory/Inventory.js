@@ -14,6 +14,8 @@ import { InventorySlot } from '../../logics/player';
 import styles from './Inventory.less';
 import { alert, prompt } from '../../common/message';
 import { expr } from 'mobx-utils';
+import { router } from '../../common/history';
+import NavBar from '../NavBar';
 
 export const qualityStyles = [
   styles.btnNormal,
@@ -57,20 +59,26 @@ export const InventorySlotComp = observer(function InventorySlotComp({
     return false;
   });
   return (
-    <TouchableOpacity style={styles.slot} activeOpacity={0.8} onPress={onPress}>
+    <TouchableOpacity
+      className={styles.slot}
+      activeOpacity={0.8}
+      onPress={onPress}
+    >
       <View
-        style={[
+        className={[
           styles.slotContent,
           qualityStyles[slot.displayQuality],
-          slot.backgroundColor && { backgroundColor: slot.backgroundColor },
           isActive && styles.slotActive,
         ]}
+        style={
+          slot.backgroundColor && { backgroundColor: slot.backgroundColor }
+        }
       >
         <Text style={slot.nameColor && { color: slot.nameColor }}>
           {slot.name || '空'}
         </Text>
       </View>
-      {slot.count > 1 && <Text style={styles.count}>{slot.count}</Text>}
+      {slot.count > 1 && <Text className={styles.count}>{slot.count}</Text>}
     </TouchableOpacity>
   );
 });
@@ -80,10 +88,10 @@ export function Button({ onPress, children, disabled }) {
     <TouchableOpacity
       onPress={onPress}
       disabled={disabled}
-      style={[styles.button, disabled && styles.buttonDisabled]}
+      className={[styles.button, disabled && styles.buttonDisabled]}
     >
       <Text
-        style={[styles.buttonLabel, disabled && styles.buttonDisabledLabel]}
+        className={[styles.buttonLabel, disabled && styles.buttonDisabledLabel]}
       >
         {children}
       </Text>
@@ -120,28 +128,28 @@ export const GoodDetail = observer(function GoodDetail(
   const slot = _slot || (selected && selected.get());
   if (slot && slot.key === 'ticket') {
     return (
-      <View style={styles.detail}>
-        <View style={styles.row}>
-          <Text style={styles.detailName}>{slot.name}</Text>
-          <Text style={styles.detailCount}> x {slot.count}</Text>
+      <View className={styles.detail}>
+        <View className={styles.row}>
+          <Text className={styles.detailName}>{slot.name}</Text>
+          <Text className={styles.detailCount}> x {slot.count}</Text>
         </View>
-        <View style={[styles.row, styles.spacer]}>
-          <View style={styles.spacer}>
-            <View style={styles.spacer} />
+        <View className={[styles.row, styles.spacer]}>
+          <View className={styles.spacer}>
+            <View className={styles.spacer} />
             <Text numberOfLines={2}>
               钥石可以让你再次挑战已经挑战过的副本。
             </Text>
           </View>
-          <View style={styles.row}>
+          <View className={styles.row}>
             <Button
               onPress={() => {
                 alert('提示', '确定要丢弃该钥石吗？', [
                   {
                     text: '确认',
-                    onPress: () => {
+                    onPress: action(() => {
                       selected.set(null);
                       slot.clear();
-                    },
+                    }),
                   },
                   { text: '取消' },
                 ]);
@@ -175,19 +183,21 @@ export const GoodDetail = observer(function GoodDetail(
   if (!slot || !slot.goodData) {
     if (slot && predefinedName[slot.key]) {
       return (
-        <View style={styles.detail}>
-          <View style={styles.row}>
-            <Text style={styles.detailName}>{predefinedName[slot.key]}</Text>
-            <Text style={styles.detailCount}> x {slot.count}</Text>
+        <View className={styles.detail}>
+          <View className={styles.row}>
+            <Text className={styles.detailName}>
+              {predefinedName[slot.key]}
+            </Text>
+            <Text className={styles.detailCount}> x {slot.count}</Text>
           </View>
-          <View style={styles.spacer}>
-            <View style={styles.spacer} />
+          <View className={styles.spacer}>
+            <View className={styles.spacer} />
             <Text numberOfLines={2}>{predefinedDescriptions[slot.key]}</Text>
           </View>
         </View>
       );
     }
-    return <View style={styles.detail} />;
+    return <View className={styles.detail} />;
   }
   const { isEquip } = slot;
   const canEquip = isEquip && world.playerUnit.canEquip(slot);
@@ -195,7 +205,7 @@ export const GoodDetail = observer(function GoodDetail(
   switch (type) {
     case 'bank':
       ops = (
-        <View style={styles.row}>
+        <View className={styles.row}>
           {slot.position === 'inventory' && (
             <Button
               onPress={() => {
@@ -268,7 +278,7 @@ export const GoodDetail = observer(function GoodDetail(
       break;
     default:
       ops = (
-        <View style={styles.row}>
+        <View className={styles.row}>
           {slot.isEquip && slot.position === 'inventory' && (
             <Button
               disabled={!canEquip}
@@ -281,7 +291,6 @@ export const GoodDetail = observer(function GoodDetail(
           )}
           {slot.position === 'equip' && (
             <Button
-              disabled={!canEquip}
               onPress={() => {
                 world.player.unequip(slot);
               }}
@@ -352,34 +361,36 @@ export const GoodDetail = observer(function GoodDetail(
   }
 
   return (
-    <View style={styles.detail}>
-      <View style={styles.row}>
-        <Text style={styles.detailName}>
+    <View className={styles.detail}>
+      <View className={styles.row}>
+        <Text className={styles.detailName}>
           {slot.name}
           {slot.originName && (
-            <Text style={styles.originName}>({slot.originName})</Text>
+            <Text className={styles.originName}>({slot.originName})</Text>
           )}
         </Text>
         {slot.count !== 1 && (
-          <Text style={styles.detailCount}> x {slot.count}</Text>
+          <Text className={styles.detailCount}> x {slot.count}</Text>
         )}
-        <View style={styles.spacer} />
+        <View className={styles.spacer} />
         {!!slot.price && (
-          <Text style={styles.detailPrice}>
+          <Text className={styles.detailPrice}>
             出售单价:{slot.price}{' '}
             {slot.count > 1 && <Text>全部出售:{slot.totalPrice}</Text>}
           </Text>
         )}
       </View>
-      <View style={[styles.row, styles.spacer]}>
-        <View style={styles.spacer}>
-          <View style={styles.row}>
+      <View className={[styles.row, styles.spacer]}>
+        <View className={styles.spacer}>
+          <View className={styles.row}>
             {isEquip && <Text>{slot.equipPositionName}</Text>}
             {isEquip && (
-              <Text style={styles.marginLeft}>需要{slot.requireLevel}级</Text>
+              <Text className={styles.marginLeft}>
+                需要{slot.requireLevel}级
+              </Text>
             )}
             {isEquip && (
-              <Text style={styles.marginLeft}>装备等级{slot.level}</Text>
+              <Text className={styles.marginLeft}>装备等级{slot.level}</Text>
             )}
           </View>
           <Text>
@@ -398,12 +409,15 @@ export const GoodDetail = observer(function GoodDetail(
           </Text>
           <Text>
             {slot.affixes.map((v, i) => (
-              <Text style={[styles.affix, v.isLegend && styles.legend]} key={i}>
+              <Text
+                className={[styles.affix, v.isLegend && styles.legend]}
+                key={i}
+              >
                 {v.display}&nbsp;
               </Text>
             ))}
           </Text>
-          <View style={styles.spacer} />
+          <View className={styles.spacer} />
           <Text numberOfLines={2}>{slot.description}</Text>
         </View>
         {ops}
@@ -412,29 +426,27 @@ export const GoodDetail = observer(function GoodDetail(
   );
 });
 
-const purchaseInventoryByDiamond = action(function purchaseInventoryByDiamond(
-  navigator
-) {
-  const { player } = world;
-  const cost = upgrades.inventoryByDiamonds[player.inventoryDiamondLevel];
-  if (game.diamonds < cost) {
-    alert('提示', '您的神力点数不足，是否召唤创世神的力量，大量获得神力？', [
-      {
-        text: '确认',
-        onPress: () => {
-          navigator.push({
-            location: '/purchase',
-          });
+const purchaseInventoryByDiamond = action(
+  function purchaseInventoryByDiamond() {
+    const { player } = world;
+    const cost = upgrades.inventoryByDiamonds[player.inventoryDiamondLevel];
+    if (game.diamonds < cost) {
+      alert('提示', '您的神力点数不足，是否召唤创世神的力量，大量获得神力？', [
+        {
+          text: '确认',
+          onPress: () => {
+            router.navigate('/purchase');
+          },
         },
-      },
-      { text: '取消' },
-    ]);
-    return;
+        { text: '取消' },
+      ]);
+      return;
+    }
+    game.diamonds -= cost;
+    player.inventory.push(new InventorySlot('inventory'));
+    player.inventoryDiamondLevel++;
   }
-  game.diamonds -= cost;
-  player.inventory.push(new InventorySlot('inventory'));
-  player.inventoryDiamondLevel++;
-});
+);
 
 const purchaseInventory = action(function purchaseInventory() {
   const { player } = world;
@@ -454,7 +466,7 @@ const purchaseInventory = action(function purchaseInventory() {
   player.inventory.push(new InventorySlot('inventory'));
 });
 
-export function upgradeInventory(navigator) {
+export function upgradeInventory() {
   const { player } = world;
   const cost =
     upgrades.inventory[player.inventory.length - player.inventoryDiamondLevel];
@@ -482,7 +494,7 @@ export function upgradeInventory(navigator) {
       '提示',
       `包裹升级需要消耗：\n${costList}\n您的物品不足，是否消耗${costDiamond}神力改变空间，扩张包裹？`,
       [
-        { text: '确认', onPress: () => purchaseInventoryByDiamond(navigator) },
+        { text: '确认', onPress: () => purchaseInventoryByDiamond() },
         { text: '取消' },
       ]
     );
@@ -496,8 +508,12 @@ export function upgradeInventory(navigator) {
 
 export function UpgradeIcon({ onPress, children }) {
   return (
-    <TouchableOpacity style={styles.slot} activeOpacity={0.8} onPress={onPress}>
-      <View style={styles.slotContent}>
+    <TouchableOpacity
+      className={styles.slot}
+      activeOpacity={0.8}
+      onPress={onPress}
+    >
+      <View className={styles.slotContent}>
         <Text>{children}</Text>
       </View>
     </TouchableOpacity>
@@ -507,11 +523,11 @@ export function UpgradeIcon({ onPress, children }) {
 export function BigBtn({ onPress, children }) {
   return (
     <TouchableOpacity
-      style={styles.bigBtn}
+      className={styles.bigBtn}
       activeOpacity={0.8}
       onPress={onPress}
     >
-      <View style={styles.bigBtnContent}>
+      <View className={styles.bigBtnContent}>
         <Text>{children}</Text>
       </View>
     </TouchableOpacity>
@@ -520,32 +536,22 @@ export function BigBtn({ onPress, children }) {
 
 @observer
 export default class Inventory extends Component {
-  static title = '包裹';
-  static leftNavTitle = '祈祷';
-  static rightNavTitle = '储藏箱';
-
   selectedItem = observable(null);
-  onLeftPressed() {
-    this.context.navigator.push({
-      location: '/purchase',
-    });
-  }
+  onLeftPressed = () => {
+    router.navigate('/purchase');
+  };
 
-  onRightPressed() {
-    this.context.navigator.push({
-      location: '/inventory/bank',
-    });
-  }
+  onRightPressed = () => {
+    router.navigate('/inventory/bank');
+  };
 
   setLootRule = () => {
-    this.context.navigator.push({
-      location: '/inventory/lootRule',
-    });
+    router.navigate('/inventory/loot-rule');
   };
 
   renderRow = (v, i) => (
     <InventorySlotComp
-      onPress={() => this.selectedItem.set(v)}
+      onPress={action(() => this.selectedItem.set(v))}
       key={i}
       slot={v}
       selectedItem={this.selectedItem}
@@ -557,43 +563,48 @@ export default class Inventory extends Component {
   }
 
   render() {
-    const { navigator } = this.context;
     const { player } = world;
     return (
-      <View style={styles.container}>
-        <View style={styles.row}>
-          <Text>
-            金币: <IntField unit={player} field="gold" /> 神力:{' '}
-            <IntField unit={game} field="diamonds" />
-          </Text>
-        </View>
-        <View style={styles.row}>
-          <Text>{player.name}的装备</Text>
-          <ScrollView contentContainerStyle={styles.rowCenter} horizontal>
-            {this.renderEquip('weapon')}
-            {this.renderEquip('plastron')}
-            {this.renderEquip('gaiter')}
-            {this.renderEquip('ornament')}
+      <NavBar
+        title="包裹"
+        leftNavTitle="祈祷"
+        rightNavTitle="储藏箱"
+        onLeftPressed={this.onLeftPressed}
+        onRightPressed={this.onRightPressed}
+      >
+        <View className={styles.container}>
+          <View className={styles.row}>
+            <Text>
+              金币: <IntField unit={player} field="gold" /> 神力:{' '}
+              <IntField unit={game} field="diamonds" />
+            </Text>
+          </View>
+          <View className={styles.row}>
+            <Text>{player.name}的装备</Text>
+            <ScrollView contentContainerClassName={styles.rowCenter} horizontal>
+              {this.renderEquip('weapon')}
+              {this.renderEquip('plastron')}
+              {this.renderEquip('gaiter')}
+              {this.renderEquip('ornament')}
+            </ScrollView>
+          </View>
+          <GoodDetail selected={this.selectedItem} />
+          <ScrollView
+            className={styles.container}
+            contentContainerClassName={styles.content}
+          >
+            {player.inventory.map(this.renderRow)}
+            {player.inventoryDiamondLevel <
+              upgrades.inventoryByDiamonds.length && (
+              <UpgradeIcon onPress={upgradeInventory}>+</UpgradeIcon>
+            )}
+            <BigBtn onPress={() => player.sortInventory(player.inventory)}>
+              整理包裹
+            </BigBtn>
+            <BigBtn onPress={this.setLootRule}>拾取规则</BigBtn>
           </ScrollView>
         </View>
-        <GoodDetail selected={this.selectedItem} />
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.content}
-        >
-          {player.inventory.map(this.renderRow)}
-          {player.inventoryDiamondLevel <
-            upgrades.inventoryByDiamonds.length && (
-            <UpgradeIcon onPress={() => upgradeInventory(navigator)}>
-              +
-            </UpgradeIcon>
-          )}
-          <BigBtn onPress={() => player.sortInventory(player.inventory)}>
-            整理包裹
-          </BigBtn>
-          <BigBtn onPress={this.setLootRule}>拾取规则</BigBtn>
-        </ScrollView>
-      </View>
+      </NavBar>
     );
   }
 }

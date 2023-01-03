@@ -22,8 +22,16 @@ const Alert = ({ title, onClose, children, buttons }) => {
             </div>
           )}
           {buttons &&
-            buttons.map((v) => (
-              <div className={styles.button} onClick={v.onPress} role="button">
+            buttons.map((v, i) => (
+              <div
+                key={i}
+                className={styles.button}
+                onClick={() => {
+                  onClose();
+                  v.onPress?.();
+                }}
+                role="button"
+              >
                 {v.text}
               </div>
             ))}
@@ -48,9 +56,10 @@ export function alert(title, message, buttons) {
         buttons={buttons}
       >
         {message}
-      </Alert>
+      </Alert>,
+      div
     );
-  }, div);
+  });
 }
 
 const Confirm = ({ onConfirm, onCancel, children }) => {

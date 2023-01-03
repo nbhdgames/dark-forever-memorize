@@ -22,15 +22,15 @@ export default class TabBar extends Component {
     );
   }
   onAppStateChange(state) {
-    if (state === 'inactive') {
-      // 进入到后台
-      if (world.player) {
-        world.player.save();
-      }
-      world.pause();
-    } else if (state === 'active') {
-      world.resumeGame();
-    }
+    // if (state === 'inactive') {
+    //   // 进入到后台
+    //   if (world.player) {
+    //     world.player.save();
+    //   }
+    //   world.pause();
+    // } else if (state === 'active') {
+    //   world.resumeGame();
+    // }
   }
   getRef = (ref) => {
     this.childrenRef = ref;

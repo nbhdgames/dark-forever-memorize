@@ -16,11 +16,11 @@ import { observable } from 'mobx';
 import { observer } from 'mobx-react/native';
 import URI from 'urijs';
 import route from '../../utils/routerDecorator';
-import {get, post} from '../../logics/network/rpc';
+import { get, post } from '../../logics/network/rpc';
 import game from '../../logics/game';
-import {stories} from '../../../data';
-import {getClientId} from '../../logics/network/clientId';
-import {checkRequirement} from '../battle/components/MapPanel';
+import { stories } from '../../../data';
+import { getClientId } from '../../logics/network/clientId';
+import { checkRequirement } from '../battle/components/MapPanel';
 import annoucement from '../../../data/annoucement';
 
 const styles = StyleSheet.create({
@@ -37,17 +37,15 @@ const styles = StyleSheet.create({
   itemLabel: {
     fontSize: 20,
   },
-  footer: {
-  },
+  footer: {},
   line: {
     flexDirection: 'row',
   },
 });
 
-@route('purchase')
 @observer
-export default class StoryList extends Component {
-  static title='情报兑换';
+export default class StoryPurchaseList extends Component {
+  static title = '情报兑换';
 
   static contextTypes = {
     navigator: PropTypes.object,
@@ -65,17 +63,21 @@ export default class StoryList extends Component {
   purchaseStory(data) {
     const { navigator } = this.context;
     if (game.diamonds < data.price) {
-      Alert.alert('提示', '您的神力点数不足，是否召唤创世神的力量，大量获得神力？', [
-        {
-          text: '确认',
-          onPress: () => {
-            navigator.push({
-              location: '/purchase',
-            });
+      Alert.alert(
+        '提示',
+        '您的神力点数不足，是否召唤创世神的力量，大量获得神力？',
+        [
+          {
+            text: '确认',
+            onPress: () => {
+              navigator.push({
+                location: '/purchase',
+              });
+            },
           },
-        },
-        { text: '取消' },
-      ]);
+          { text: '取消' },
+        ]
+      );
       return;
     }
     game.diamonds -= data.price;
@@ -95,7 +97,7 @@ export default class StoryList extends Component {
       const { navigator } = this.context;
       navigator.push({
         location: '/story/gm',
-        passProps: {root: true},
+        passProps: { root: true },
       });
       return;
     }
@@ -116,44 +118,61 @@ export default class StoryList extends Component {
   }
 
   enterCode = () => {
-    AlertIOS.prompt('帝国金库', '卫兵拦住了你，要你说出通行的口令。', async value => {
-      if (value === 'gm') {
-        await this.enterGM();
-        return;
-      }
-      const recordId = encodeURIComponent(value);
-      if (game.ticketMap.has(recordId)) {
-        Alert.alert('帝国金库', '这个口令已经领取过了，卫兵把你赶了出来');
-        return;
-      }
-      try {
-        const clientId = await getClientId();
-        const productId = await get(new URI('/ticket/use').query({
-          clientId,
-          ticketId: value,
-        }).toString());
+    AlertIOS.prompt(
+      '帝国金库',
+      '卫兵拦住了你，要你说出通行的口令。',
+      async (value) => {
+        if (value === 'gm') {
+          await this.enterGM();
+          return;
+        }
+        const recordId = encodeURIComponent(value);
+        if (game.ticketMap.has(recordId)) {
+          Alert.alert('帝国金库', '这个口令已经领取过了，卫兵把你赶了出来');
+          return;
+        }
+        try {
+          const clientId = await getClientId();
+          const productId = await get(
+            new URI('/ticket/use')
+              .query({
+                clientId,
+                ticketId: value,
+              })
+              .toString()
+          );
 
-        if (game.runProduct(productId, false)) {
-          game.ticketMap.set(recordId, true);
-          const name = game.getProductName(productId);
-          Alert.alert('帝国金库', `在卫兵的指引下，你从金库里领到了${name}。`);
-        } else {
-          Alert.alert('帝国金库', `虽然口令正确，但是卫兵也在金库里迷路了……（请更新游戏再尝试该口令）。`);
-        }
-      } catch (err) {
-        console.warn(err.stack);
-        if (err.status === 404) {
-          Alert.alert('帝国金库', `口令错误，卫兵把你赶了出来。`);
-        } else {
-          Alert.alert('帝国金库', '金库今天没有开张。（网络连接失败）');
+          if (game.runProduct(productId, false)) {
+            game.ticketMap.set(recordId, true);
+            const name = game.getProductName(productId);
+            Alert.alert(
+              '帝国金库',
+              `在卫兵的指引下，你从金库里领到了${name}。`
+            );
+          } else {
+            Alert.alert(
+              '帝国金库',
+              `虽然口令正确，但是卫兵也在金库里迷路了……（请更新游戏再尝试该口令）。`
+            );
+          }
+        } catch (err) {
+          console.warn(err.stack);
+          if (err.status === 404) {
+            Alert.alert('帝国金库', `口令错误，卫兵把你赶了出来。`);
+          } else {
+            Alert.alert('帝国金库', '金库今天没有开张。（网络连接失败）');
+          }
         }
       }
-    });
+    );
   };
 
   renderRow = (data) => {
     return (
-      <TouchableOpacity style={styles.item} onPress={() => this.purchaseStory(data)}>
+      <TouchableOpacity
+        style={styles.item}
+        onPress={() => this.purchaseStory(data)}
+      >
         <Text style={styles.itemLabel}>{data.name} </Text>
         <Text>消耗神力{data.price}点</Text>
       </TouchableOpacity>
@@ -163,8 +182,8 @@ export default class StoryList extends Component {
   annoucement = () => {
     this.context.navigator.push({
       location: '/story/annoucement',
-    })
-  }
+    });
+  };
 
   renderFooter = () => {
     return (
@@ -189,12 +208,13 @@ export default class StoryList extends Component {
       <ListView
         style={styles.container}
         dataSource={this.dataSource.cloneWithRows(
-          game.storiesMap.keys()
-            .filter(k => game.storiesMap.get(k) === 'task')
-            .map(k => stories[k])
-            .filter(v => v)
-            .filter(v => !v.requirement || checkRequirement(v.requirement))
-            .filter(v => v.taskType === 'purchase')
+          game.storiesMap
+            .keys()
+            .filter((k) => game.storiesMap.get(k) === 'task')
+            .map((k) => stories[k])
+            .filter((v) => v)
+            .filter((v) => !v.requirement || checkRequirement(v.requirement))
+            .filter((v) => v.taskType === 'purchase')
         )}
         renderRow={this.renderRow}
         renderFooter={this.renderFooter}

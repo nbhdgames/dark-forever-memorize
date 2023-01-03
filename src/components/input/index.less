@@ -1,5 +1,6 @@
 .container {
   display: flex;
+  align-items: center;
   flex-direction: row;
   border: solid 1px #ddd;
   border-radius: 2px;
@@ -12,7 +13,7 @@
   height: 26px;
   background-color: transparent;
   border: none;
-  color: #fff;
+  color: #000;
   outline: none;
 
   &::placeholder {
@@ -41,9 +42,15 @@
 .btn {
   width: 30px;
   height: 30px;
+  text-align: center;
+  line-height: 30px;
+  color: #000;
   margin: 0 !important;
-  border: none !important;
-  border-radius: 0 !important;
+  border: solid 1px #999 !important;
+  border-radius: 5px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .clear {

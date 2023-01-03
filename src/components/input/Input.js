@@ -139,6 +139,7 @@ export function InputNumber({
         value={text}
         onChange={handleChange}
         onBlur={resetText}
+        inputMode="numeric"
       />
       <Button
         disabled={value >= max}

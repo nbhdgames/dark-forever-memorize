@@ -80,6 +80,7 @@ class World extends EventEmitter {
     this.logicTimeline = new Timeline(this.timeline);
   }
 
+  @action
   load(player, worldState) {
     this.player = player;
     this.resetTimeline();

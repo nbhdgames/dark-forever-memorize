@@ -25,14 +25,25 @@ export const View = forwardRef(function ({ className, ...others }, ref) {
   );
 });
 
+export const TextInput = forwardRef(function (props, ref) {
+  return <input ref={ref} {...props} />;
+});
+
 export function TouchableOpacity({
   activeOpacity,
   className,
   onPress,
   onLongPress,
+  disabled,
   ...others
 }) {
   let state = useMemo(() => ({}));
+
+  const handleClick = useCallback(() => {
+    if (!disabled) {
+      onPress();
+    }
+  }, [disabled, onPress]);
 
   const handleMouseDown = useCallback(() => {
     state.timer = setTimeout(() => {
@@ -47,8 +58,12 @@ export function TouchableOpacity({
   }, [onLongPress]);
   return (
     <div
-      className={classnames(styles.touchable, className)}
-      onClick={onPress}
+      className={classnames(
+        styles.touchable,
+        disabled && styles.disabled,
+        className
+      )}
+      onClick={handleClick}
       {...others}
       onMouseDown={handleMouseDown}
       onMouseUp={HandleMouseUp}

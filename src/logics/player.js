@@ -777,7 +777,7 @@ export default class Player extends PlayerMeta {
 
     this.timestamp = v.timestamp || Date.now();
     this.timelineId = v.timelineId;
-    this.minLootLevel = v.minLootLevel;
+    this.minLootLevel = v.minLootLevel || 0;
 
     this.gold = v.gold || 0;
     this.inventoryDiamondLevel = v.inventoryDiamondLevel || 0;
