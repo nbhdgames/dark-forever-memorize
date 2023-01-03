@@ -16,7 +16,7 @@ import { alert } from '../../common/message';
 import { router } from '../../common/history';
 
 const ChooseItem = observer(function ChooseItem(
-  { meta, id, editing, entering, rowId },
+  { meta, id, editing, entering },
   context
 ) {
   const choosePlayer = async (noWorldState) => {
@@ -31,9 +31,7 @@ const ChooseItem = observer(function ChooseItem(
       // world.addPlayer(player);
       // world.onMapChanged();
       world.resumeGame();
-      navigator.resetTo({
-        location: '/home/battle',
-      });
+      router.navigate('/home');
     } catch (err) {
       world.dispose();
       if (__DEV__) {
@@ -42,7 +40,7 @@ const ChooseItem = observer(function ChooseItem(
         mgn.debug(err.message);
         mgn.debug(err.stack);
       }
-      Alert.alert(
+      alert(
         '错误',
         '加载游戏失败，请耐心等待更新，或者先选择其它角色进入游戏。' +
           err.message
@@ -50,7 +48,7 @@ const ChooseItem = observer(function ChooseItem(
     }
   };
   function deletePlayer() {
-    Alert.alert(
+    alert(
       '提示',
       '您确定要删除该角色吗？\n删除角色你将会失去：金币，经验，职业等级、包裹物品、装备。\n你将不会失去：神力、银行、剧情、成就',
       [
@@ -60,7 +58,7 @@ const ChooseItem = observer(function ChooseItem(
     );
   }
   function recoveryPlayer() {
-    Alert.alert(
+    alert(
       '提示',
       '如果您无法正常进入游戏，可以尝试从错误中恢复，但您可能会失去相应的离线收益，是否继续？',
       [{ text: '确认', onPress: () => choosePlayer(true) }, { text: '取消' }]
@@ -71,8 +69,7 @@ const ChooseItem = observer(function ChooseItem(
       <View className={styles.row}>
         <View className={[styles.item, styles.flex]}>
           <Text>
-            {`${+rowId + 1}`}. {meta.roleData.name} {meta.currentCareerLevel}级
-            {meta.careerName}
+            {meta.roleData.name} {meta.currentCareerLevel}级{meta.careerName}
           </Text>
         </View>
         <TouchableOpacity className={styles.button} onPress={recoveryPlayer}>
@@ -90,8 +87,7 @@ const ChooseItem = observer(function ChooseItem(
       onPress={() => choosePlayer(false)}
     >
       <Text>
-        {`${+rowId + 1}`}. {meta.roleData.name} {meta.currentCareerLevel}级
-        {meta.careerName}
+        {meta.roleData.name} {meta.currentCareerLevel}级{meta.careerName}
       </Text>
     </TouchableOpacity>
   );

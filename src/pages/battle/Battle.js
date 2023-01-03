@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { View, Text } from '../../components';
-import { computed, observable } from 'mobx';
+import { action, computed, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import message from '../../logics/message';
 import world from '../../logics/world';
@@ -17,13 +17,12 @@ import PlayerPanel from './components/PlayerPanel';
 import MapPanel from './components/MapPanel';
 import { alert } from '../../common/message';
 import styles from './Battle.less';
+import NavBar from '../NavBar';
+import { router } from '../../common/history';
 const annoucement = require('../../../data/annoucement');
 
 @observer
 export default class Battle extends Component {
-  static title = '战斗';
-  static leftNavTitle = '切换人物';
-
   selectedItem = observable(null);
 
   dispose;
@@ -32,9 +31,9 @@ export default class Battle extends Component {
     if (game.lastVersion !== annoucement.version) {
       game.lastVersion = annoucement.version;
       setTimeout(() => {
-        this.context.navigator.push({
-          location: '/story/annoucement',
-        });
+        // this.context.navigator.push({
+        //   location: '/story/annoucement',
+        // });
       }, 1000);
     }
     checkStoriesLater();
@@ -43,7 +42,7 @@ export default class Battle extends Component {
   componentWillUnmount() {
     this.dispose.remove();
   }
-  onLeftPressed() {
+  onLeftPressed = action(() => {
     if (world.player) {
       world.player.save();
     }
@@ -51,10 +50,8 @@ export default class Battle extends Component {
     game.save();
     renderMessage.dispose();
     game.currentPlayer = null;
-    this.context.navigator.resetTo({
-      location: '/player/choose',
-    });
-  }
+    router.navigate('/player/choose');
+  });
 
   @computed
   get pendingTimeLabel() {
@@ -91,21 +88,27 @@ export default class Battle extends Component {
       );
     }
     return (
-      <View className={styles.container}>
-        <ScrollableTabView className={styles.container}>
-          <UnitPanel tabLabel="单位" />
-          {world.units
-            .filter((v) => v.player)
-            .map((v, i) => (
-              <PlayerPanel key={i} unit={v} tabLabel={v.name} />
-            ))}
-          <MapPanel tabLabel="地图" />
-        </ScrollableTabView>
-        <BuildInventory
-          selected={this.selectedItem}
-          inventory={player.awardInventory}
-        />
-      </View>
+      <NavBar
+        title="战斗"
+        leftNavTitle="切换人物"
+        onLeftPressed={this.onLeftPressed}
+      >
+        <View className={styles.container}>
+          <ScrollableTabView className={styles.container}>
+            <UnitPanel tabLabel="单位" />
+            {world.units
+              .filter((v) => v.player)
+              .map((v, i) => (
+                <PlayerPanel key={i} unit={v} tabLabel={v.name} />
+              ))}
+            <MapPanel tabLabel="地图" />
+          </ScrollableTabView>
+          <BuildInventory
+            selected={this.selectedItem}
+            inventory={player.awardInventory}
+          />
+        </View>
+      </NavBar>
     );
   }
 }

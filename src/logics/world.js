@@ -42,6 +42,7 @@ class World extends EventEmitter {
   updatedTime = 0;
 
   // 恢复游戏，并开始急速模式
+  @action
   resumeGame(timestamp) {
     this.timeline.pause();
     this.paused = true;
@@ -153,31 +154,33 @@ class World extends EventEmitter {
 
   // 迭代急速模式
   requestPending() {
-    this.pendingRequest = requestAnimationFrame(() => {
-      const { updateRate } = this;
-      const ratedPending = this.pendingTime / updateRate;
-      const ratedRest = this.timeline.stepPaused(ratedPending);
-      this.pendingTime = ratedRest * updateRate;
-      this.player.timestamp += (ratedPending - ratedRest) * (updateRate - 1);
+    this.pendingRequest = requestAnimationFrame(
+      action(() => {
+        const { updateRate } = this;
+        const ratedPending = this.pendingTime / updateRate;
+        const ratedRest = this.timeline.stepPaused(ratedPending);
+        this.pendingTime = ratedRest * updateRate;
+        this.player.timestamp += (ratedPending - ratedRest) * (updateRate - 1);
 
-      if (!this.mapData.isDungeon) {
-        this.updatedTime += ratedPending - ratedRest;
-        if (this.updatedTime > 60 * 1000) {
-          this.updateRate *= 1.1;
-          this.updatedTime -= 60 * 1000;
+        if (!this.mapData.isDungeon) {
+          this.updatedTime += ratedPending - ratedRest;
+          if (this.updatedTime > 60 * 1000) {
+            this.updateRate *= 1.1;
+            this.updatedTime -= 60 * 1000;
+          }
         }
-      }
 
-      if (this.pendingTime <= 0) {
-        this.updatedTime = 0;
-        this.updateRate = 1;
-        this.timeline.resume();
-        this.paused = false;
-        this.pendingRequest = null;
-      } else {
-        this.requestPending();
-      }
-    });
+        if (this.pendingTime <= 0) {
+          this.updatedTime = 0;
+          this.updateRate = 1;
+          this.timeline.resume();
+          this.paused = false;
+          this.pendingRequest = null;
+        } else {
+          this.requestPending();
+        }
+      })
+    );
   }
 
   constructor() {

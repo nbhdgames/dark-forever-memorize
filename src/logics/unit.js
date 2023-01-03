@@ -715,6 +715,7 @@ export class Unit {
     }
   };
 
+  @action
   onAttackCoolDown = () => {
     this.attackCoolDownTimer = null;
     this.attackCooledDown = true;

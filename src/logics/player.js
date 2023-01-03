@@ -545,7 +545,7 @@ export default class Player extends PlayerMeta {
   }
 
   @action
-  static async load(key, noWorldState = false) {
+  static load(key, noWorldState = false) {
     const json = localStorage.getItem(`player-${key}`);
     const ret = new Player(key);
     let timestamp;
@@ -1051,7 +1051,7 @@ export default class Player extends PlayerMeta {
     good.clear();
   }
 
-  async save(withoutWorldState) {
+  save(withoutWorldState) {
     try {
       if (!this.key) {
         return;

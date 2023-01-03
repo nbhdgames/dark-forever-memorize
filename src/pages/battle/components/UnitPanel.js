@@ -23,7 +23,7 @@ import styles from './UnitPanel.less';
 const Unit = observer(function Unit({ unit }) {
   return (
     <TouchableOpacity
-      className={[styles.unit, styles[camelCase('unit', unit.camp)]]}
+      className={[styles.unit, styles[camelCase('unit-' + unit.camp)]]}
       onPress={() => world.focusEnemy(unit)}
       activeOpacity={0.8}
     >

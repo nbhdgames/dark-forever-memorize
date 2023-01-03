@@ -320,7 +320,7 @@ class Game {
     return this;
   }
 
-  async save() {
+  save() {
     if (!this.loaded) {
       return;
     }
