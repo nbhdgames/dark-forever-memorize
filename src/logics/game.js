@@ -336,7 +336,7 @@ class Game {
             alg: 'HS256',
             typ: 'JWT',
           },
-          toJS(this, false),
+          preSave(this.toJS()),
           SECRET
         )
       );
