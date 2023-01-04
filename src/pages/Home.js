@@ -7,6 +7,7 @@ import { action, observable } from 'mobx';
 import Skills from './career/Skills';
 import Produces from './produce/Produce';
 import StoryList from './stories/StoryList';
+import world from '../logics/world';
 
 const children = {
   battle: <Battle />,
@@ -20,6 +21,21 @@ const activeObservable = observable.box('battle');
 
 @observer
 export default class Home extends Component {
+  componentDidMount() {
+    document.addEventListener('visibilitychange', this.onVisibilityChange);
+  }
+  componentWillUnmount() {
+    document.removeEventListener('visibilitychange', this.onVisibilityChange);
+  }
+  onVisibilityChange = () => {
+    if (document.visibilityState === 'hidden') {
+      console.log('pause');
+      world.pause();
+    } else {
+      console.log('resume');
+      world.resumeGame();
+    }
+  };
   handleTabChange = action((active) => {
     activeObservable.set(active);
   });

@@ -43,12 +43,16 @@ class World extends EventEmitter {
 
   // 恢复游戏，并开始急速模式
   @action
-  resumeGame(timestamp) {
+  resumeGame() {
     this.timeline.pause();
     this.paused = true;
-    this.pendingTime = Math.min(12 * 3600 * 1000, Date.now() - timestamp) | 0;
-
-    this.requestPending();
+    this.updateRate = 1;
+    this.updatedTime = 0;
+    const totalDiffTime = Date.now() - this.player.timestamp;
+    const diffTime = Math.min(totalDiffTime, 72 * 3600 * 1000);
+    const skipTime = totalDiffTime - diffTime;
+    this.player.timestamp += skipTime;
+    this.forward(diffTime);
   }
 
   forward(diffTime) {

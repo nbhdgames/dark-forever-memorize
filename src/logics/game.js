@@ -347,7 +347,9 @@ class Game {
   }
 
   toJS() {
-    return toJS(this, false);
+    const ret = toJS(this, false);
+    ret.secretRecord = this.secretRecord.toJS();
+    return ret;
   }
 
   checkCanCreate() {

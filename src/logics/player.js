@@ -549,7 +549,6 @@ export default class Player extends PlayerMeta {
   static load(key, noWorldState = false) {
     const json = localStorage.getItem(`player-${key}`);
     const ret = new Player(key);
-    let timestamp;
     if (json) {
       let other;
       if (json[0] === '{') {
@@ -557,7 +556,6 @@ export default class Player extends PlayerMeta {
       } else if (json[0] === 's') {
         other = world.start(json);
       }
-      timestamp = other.timestamp;
       doMigrates(other);
       ret.fromJS(other);
       if (noWorldState) {
@@ -1056,6 +1054,7 @@ export default class Player extends PlayerMeta {
   save(withoutWorldState) {
     try {
       if (!this.key) {
+        console.warn('No player key , failed to save');
         return;
       }
       // 保存关键信息到全局存储中,便于在人物选择时展示
@@ -1070,9 +1069,11 @@ export default class Player extends PlayerMeta {
       const js = preSave(this.toJS());
 
       if (!withoutWorldState) {
+        js.timestamp = this.timestamp + world.timeline.getTime();
         js.worldState = world.dumpState();
+      } else {
+        js.timestamp = this.timestamp;
       }
-      js.timestamp = Date.now() - world.pendingTime;
       localStorage.setItem(
         `player-${this.key}`,
         __DEV__ ? JSON.stringify(js) : world.stop(js)
@@ -1179,6 +1180,7 @@ export default class Player extends PlayerMeta {
   // 从生产/奖励包裹里领取所有物品（如包裹已满，剩余的会保留在对应的包裹里。
   getInventory(target) {
     target.replace(world.lootGoods(target));
+    this.save();
   }
 
   getSkillLevel(key) {
