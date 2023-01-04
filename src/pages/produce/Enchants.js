@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from '../../components';
-import { action, observable } from 'mobx';
+import { action, makeObservable, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { InventorySlotComp, Button } from '../inventory/Inventory';
 import world from '../../logics/world';
@@ -25,6 +25,11 @@ export default class Enchants extends Component {
 
   @observable
   newAffixes = [];
+
+  constructor() {
+    super();
+    makeObservable(this);
+  }
 
   renderEquip(pos) {
     return this.renderRow(world.player.equipments[pos], pos);

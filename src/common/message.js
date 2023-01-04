@@ -68,10 +68,12 @@ const Confirm = ({ onConfirm, onCancel, children }) => {
       <div className={styles.modal}>
         <div className={styles.message}>{children}</div>
         <div className={styles.buttonList}>
-          <Button onClick={onConfirm} autoFocus>
+          <div className={styles.button} onClick={onConfirm} role="button">
             确定
-          </Button>
-          <Button onClick={onCancel}>取消</Button>
+          </div>
+          <div onClick={onCancel} className={styles.button} role="button">
+            取消
+          </div>
         </div>
       </div>
     </div>
@@ -137,8 +139,12 @@ const Prompt = ({ title, onConfirm, onCancel, defaultValue, children }) => {
           onKeyDown={handleKeyDown}
         />
         <div className={styles.buttonList}>
-          <Button onClick={handleConfirm}>确定</Button>
-          <Button onClick={onCancel}>取消</Button>
+          <div className={styles.button} onClick={handleConfirm} role="button">
+            确定
+          </div>
+          <div onClick={onCancel} className={styles.button} role="button">
+            取消
+          </div>
         </div>
       </div>
     </div>
@@ -184,8 +190,12 @@ const PromptTextArea = ({ onConfirm, onCancel, defaultValue, children }) => {
         <div className={styles.message}>{children}</div>
         <TextArea autoFocus value={val} onValueChange={setVal} />
         <div className={styles.buttonList}>
-          <Button onClick={handleConfirm}>确定</Button>
-          <Button onClick={onCancel}>取消</Button>
+          <div className={styles.button} onClick={handleConfirm} role="button">
+            确定
+          </div>
+          <div onClick={onCancel} className={styles.button} role="button">
+            取消
+          </div>
         </div>
       </div>
     </div>

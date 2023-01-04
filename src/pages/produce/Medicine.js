@@ -236,15 +236,11 @@ export default class Medicine extends Component {
     const v = await prompt(
       '请输入要投入熔炉的数量',
       `每个[${slot.name}]提升${energyPerItem.toFixed()}点熔炉能量`,
-      [
-        {
-          text: '确定',
-          onPress: (v) => {},
-        },
-        { text: '取消' },
-      ],
       `${slot.count}`
     );
+    if (!v) {
+      return;
+    }
     const { count } = slot;
     const tmp = v | 0;
     if (tmp <= 0) {
