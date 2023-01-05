@@ -176,7 +176,7 @@ class World extends EventEmitter {
         if (!this.mapData.isDungeon) {
           this.updatedTime += ratedPending - ratedRest;
           if (this.updatedTime > 60 * 1000) {
-            this.updateRate *= 1.1;
+            this.updateRate *= 1.01;
             this.updatedTime -= 60 * 1000;
           }
         }
