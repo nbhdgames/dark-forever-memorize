@@ -18,6 +18,7 @@ import { stories, medicines } from '../../data';
 import { Record } from 'immutable';
 import { jws, b64utos } from 'jsrsasign';
 import { preSave } from '../common/utils';
+import { alert } from '../common/message';
 
 const SECRET = 'chapter5.woodElf';
 
@@ -83,8 +84,8 @@ const productNames = {
 };
 
 const SecretRecord = Record({
-  diamonds: 0,
-  playerSlotCount: 1,
+  diamonds: 5000,
+  playerSlotCount: 5,
   purchaseRate: 1,
   bowelLevel: 0,
 });
@@ -169,9 +170,8 @@ class Game {
   @computed
   get purchaseSlotPrice() {
     // eslint-disable-next-line no-bitwise
-    return (
-      400 + 500 * this.playerSlotCount ** 2 + 100 * this.playerSlotCount ** 3
-    );
+    return 0;
+    // 400 + 500 * this.playerSlotCount ** 2 + 100 * this.playerSlotCount ** 3
   }
 
   @computed
@@ -325,25 +325,99 @@ class Game {
       return;
     }
 
-    if (__DEV__) {
-      localStorage.setItem('game', JSON.stringify(preSave(this.toJS())));
-    } else {
-      localStorage.setItem(
-        'game',
-        jws.JWS.sign(
-          null,
-          {
-            alg: 'HS256',
-            typ: 'JWT',
-          },
-          preSave(this.toJS()),
-          SECRET
-        )
-      );
-    }
+    localStorage.setItem(
+      'game',
+      __DEV__
+        ? JSON.stringify(preSave(this.toJS()))
+        : jws.JWS.sign(
+            null,
+            {
+              alg: 'HS256',
+              typ: 'JWT',
+            },
+            preSave(this.toJS()),
+            SECRET
+          )
+    );
+
     if (__DEV__) {
       console.log('Game info saved.');
     }
+  }
+
+  buildSaveFile() {
+    const game = localStorage.getItem('game');
+    if (!game) return '';
+    const players = Array.from(this.playerMetas.entries()).map((player) => {
+      const key = `player-${player[0]}`;
+      const value = localStorage.getItem(key);
+      if (value) return [key, value];
+    });
+    return JSON.stringify({ players, game });
+  }
+
+  exportSaveFile() {
+    const fileName = '永夜2016典藏回忆版存档' + new Date().getTime() + '.sav';
+    const saveJsonString = this.buildSaveFile();
+    if (saveJsonString === '') {
+      alert('提示', '没有存档可以被导出');
+      return;
+    }
+    const streamData = new Blob([saveJsonString], {
+      type: 'application/octet-stream',
+    });
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+      // ie
+      window.navigator.msSaveOrOpenBlob(streamData, fileName);
+    } else {
+      const link = document.createElement('a');
+      link.download = fileName;
+      link.style.display = 'none';
+      link.href = window.URL.createObjectURL(streamData);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+
+  importSaveFile(file) {
+    if (!/.*.sav/.test(file.name)) {
+      alert('导入错误', '请导入正确的存档文件');
+      return;
+    }
+    const reader = new FileReader();
+    const restore = this.restore.bind(this);
+    reader.onload = function (e) {
+      restore(e.target.result);
+    };
+    reader.readAsText(file);
+  }
+
+  restore(JsonString) {
+    const that = this;
+    alert('警告', '导入存档会导致之前存档清空，请确定是否要导入新存档', [
+      {
+        text: '确认',
+        onPress: async () => {
+          try {
+            const data = JSON.parse(JsonString);
+            localStorage.clear();
+            if (data.game) {
+              localStorage.setItem('game', data.game);
+            }
+            if (data.players && data.players.length) {
+              data.players.forEach((player) => {
+                localStorage.setItem(player[0], player[1]);
+              });
+            }
+            await that.load();
+          } catch (error) {
+            alert('导入错误', '联系管理猿儿，发送此错误' + error);
+          }
+        },
+      },
+      { text: '取消' },
+    ]);
   }
 
   toJS() {
