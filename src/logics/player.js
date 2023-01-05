@@ -1069,6 +1069,7 @@ export default class Player extends PlayerMeta {
       const js = preSave(this.toJS());
 
       if (!withoutWorldState) {
+        // console.log(this.timestamp, world.timeline.getTime(), Date.now());
         js.timestamp = this.timestamp + world.timeline.getTime();
         js.worldState = world.dumpState();
       } else {
