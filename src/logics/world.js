@@ -48,11 +48,17 @@ class World extends EventEmitter {
     this.paused = true;
     this.updateRate = 1;
     this.updatedTime = 0;
-    const totalDiffTime = Date.now() - this.player.timestamp;
-    const diffTime = Math.min(totalDiffTime, 72 * 3600 * 1000);
-    const skipTime = totalDiffTime - diffTime;
-    this.player.timestamp += skipTime;
-    this.forward(diffTime);
+    const totalDiffTime =
+      Date.now() - this.player.timestamp - this.timeline.getTime();
+    // console.log(totalDiffTime);
+    if (totalDiffTime > 0) {
+      const diffTime = Math.min(totalDiffTime, 72 * 3600 * 1000);
+      const skipTime = totalDiffTime - diffTime;
+      this.player.timestamp += skipTime;
+      this.forward(diffTime);
+    } else {
+      this.timeline.resume();
+    }
   }
 
   forward(diffTime) {
