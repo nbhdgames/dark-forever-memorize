@@ -170,8 +170,7 @@ class Game {
   @computed
   get purchaseSlotPrice() {
     // eslint-disable-next-line no-bitwise
-    return 0;
-    // 400 + 500 * this.playerSlotCount ** 2 + 100 * this.playerSlotCount ** 3
+    400 + 500 * this.playerSlotCount ** 2 + 100 * this.playerSlotCount ** 3;
   }
 
   @computed
