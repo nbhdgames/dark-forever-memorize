@@ -53,8 +53,8 @@ module.exports = {
   },
   availableClasses: {
     base: true,
-    sword: true,    // 剑
-    cloth: true,    // 布甲
+    sword: true, // 剑
+    cloth: true, // 布甲
     armor: true,
     ornament: true,
   },

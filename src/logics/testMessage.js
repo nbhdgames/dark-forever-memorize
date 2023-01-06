@@ -24,12 +24,6 @@ const predefinedGoodName = {
   gold: '金币',
 };
 
-const console = {
-  log(msg) {
-    process.stdout.write(msg+'\n');
-  }
-}
-
 class MessageDisplay {
   constructor() {
     message.addListener('message', this.onMessage);
@@ -38,7 +32,7 @@ class MessageDisplay {
   keyGenerator = 0;
 
   onMessage = (msg) => {
-    const renderer = this[camelCase('render', msg.type)];
+    const renderer = this[camelCase('render-' + msg.type)];
     if (!renderer) {
       console.warn(`No renderer for message ${msg.type}`);
       return;
@@ -47,27 +41,45 @@ class MessageDisplay {
   };
 
   renderBattleDodge({ from, to, skill }) {
-    console.log(`${from.displayName}的${skill.name}被${to.displayName}躲闪了。`);
+    console.log(
+      `${from.displayName}的${skill.name}被${to.displayName}躲闪了。`
+    );
   }
 
   renderBattleDamage({ damageType, from, to, skill, value, isCrit, absorbed }) {
-    console.log(`${isCrit ? '暴击！':''}${from.displayName}的${skill.name}对${to.displayName}造成了${Math.round(value)}点${DAMAGE_TYPES[damageType]}伤害。${absorbed ? `(${absorbed|0}点已吸收)` : ''}`);
+    console.log(
+      `${isCrit ? '暴击！' : ''}${from.displayName}的${skill.name}对${
+        to.displayName
+      }造成了${Math.round(value)}点${DAMAGE_TYPES[damageType]}伤害。${
+        absorbed ? `(${absorbed | 0}点已吸收)` : ''
+      }`
+    );
   }
 
   renderBattleHeal({ from, to, skill, value }) {
-    console.log(`${from.displayName}的${skill.name}为${to.displayName}回复了${Math.round(value)}点生命。`);
+    console.log(
+      `${from.displayName}的${skill.name}为${to.displayName}回复了${Math.round(
+        value
+      )}点生命。`
+    );
   }
 
   renderBattleSkill({ from, targets, skill }) {
     if (!targets) {
       console.log(`${from.displayName}释放了${skill.name}。`);
     } else {
-      console.log(`${from.displayName}对${targets.map(v => v.displayName).join(',')}释放了${skill.name}。`);
+      console.log(
+        `${from.displayName}对${targets
+          .map((v) => v.displayName)
+          .join(',')}释放了${skill.name}。`
+      );
     }
   }
 
   renderPlayerDeath({ who, rebornIn }) {
-    console.log(`${who.displayName}陷入了昏迷，将在${Math.round(rebornIn)}秒后恢复。`);
+    console.log(
+      `${who.displayName}陷入了昏迷，将在${Math.round(rebornIn)}秒后恢复。`
+    );
   }
 
   renderBattleDeath({ who }) {
@@ -92,11 +104,17 @@ class MessageDisplay {
 
   renderPlayerLoot({ who, what }) {
     const { count, key } = what;
-    const qualityId = goods[key]&&goods[key].quality;
+    const qualityId = goods[key] && goods[key].quality;
     if (count && count > 1) {
-      console.log(`${who.name}拾取了${count}个${predefinedGoodName[key] || goods[key].name}。`);
+      console.log(
+        `${who.name}拾取了${count}个${
+          predefinedGoodName[key] || goods[key].name
+        }。`
+      );
     } else {
-      console.log(`${who.name}拾取了${predefinedGoodName[key] || goods[key].name}。`);
+      console.log(
+        `${who.name}拾取了${predefinedGoodName[key] || goods[key].name}。`
+      );
     }
   }
 

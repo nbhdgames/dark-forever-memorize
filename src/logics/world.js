@@ -1,7 +1,13 @@
 /**
  * Created by tdzl2003 on 2/1/17.
  */
-import { observable, computed, action, makeObservable } from 'mobx';
+import {
+  observable,
+  computed,
+  action,
+  makeObservable,
+  runInAction,
+} from 'mobx';
 import { EventEmitter } from 'fbemitter';
 
 import Timeline from './Timeline';
@@ -165,18 +171,18 @@ class World extends EventEmitter {
 
   // 迭代急速模式
   requestPending() {
-    this.pendingRequest = requestAnimationFrame(
-      action(() => {
-        const { updateRate } = this;
-        const ratedPending = this.pendingTime / updateRate;
-        const ratedRest = this.timeline.stepPaused(ratedPending);
+    this.pendingRequest = requestAnimationFrame(() => {
+      const { updateRate } = this;
+      const ratedPending = this.pendingTime / updateRate;
+      const ratedRest = this.timeline.stepPaused(ratedPending);
+      runInAction(() => {
         this.pendingTime = ratedRest * updateRate;
         this.player.timestamp += (ratedPending - ratedRest) * (updateRate - 1);
 
         if (!this.mapData.isDungeon) {
           this.updatedTime += ratedPending - ratedRest;
           if (this.updatedTime > 60 * 1000) {
-            this.updateRate *= 1.01;
+            this.updateRate *= 1.05;
             this.updatedTime -= 60 * 1000;
           }
         }
@@ -190,8 +196,8 @@ class World extends EventEmitter {
         } else {
           this.requestPending();
         }
-      })
-    );
+      });
+    });
   }
 
   constructor() {
