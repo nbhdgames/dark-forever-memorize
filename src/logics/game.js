@@ -326,20 +326,22 @@ class Game {
       return;
     }
 
-    localStorage.setItem(
-      'game',
-      __DEV__
-        ? JSON.stringify(preSave(this.toJS()))
-        : jws.JWS.sign(
-            null,
-            {
-              alg: 'HS256',
-              typ: 'JWT',
-            },
-            preSave(this.toJS()),
-            SECRET
-          )
-    );
+    if (__DEV__) {
+      localStorage.setItem('game', JSON.stringify(preSave(this.toJS())));
+    } else {
+      localStorage.setItem(
+        'game',
+        jws.JWS.sign(
+          null,
+          {
+            alg: 'HS256',
+            typ: 'JWT',
+          },
+          preSave(this.toJS()),
+          SECRET
+        )
+      );
+    }
 
     if (__DEV__) {
       console.log('Game info saved.');
