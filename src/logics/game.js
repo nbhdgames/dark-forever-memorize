@@ -396,14 +396,14 @@ class Game {
     reader.readAsText(file);
   }
 
-  restore(JsonString) {
+  restore(jsonString) {
     const that = this;
     alert('警告', '导入存档会导致之前存档清空，请确定是否要导入新存档', [
       {
         text: '确认',
         onPress: async () => {
           try {
-            const data = JSON.parse(JsonString);
+            const data = JSON.parse(jsonString);
             localStorage.clear();
             if (data.game) {
               localStorage.setItem('game', data.game);
