@@ -3,7 +3,7 @@
  */
 
 module.exports = {
-  version: '2023.1.4',
+  version: '2023.1.6',
   description: `玩家交流QQ群：614658451，欢迎加入了解最新永夜资讯。
 
 2023.1.6 更新说明
