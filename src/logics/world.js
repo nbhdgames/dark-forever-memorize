@@ -21,6 +21,7 @@ import { maps, enemies, legends } from '../../data';
 import md5 from 'md5';
 import crypt from 'crypt';
 import { utf8 } from 'charenc';
+import { alert } from '../common/message';
 
 const DEBUG_RATE = 1;
 
@@ -82,6 +83,7 @@ class World extends EventEmitter {
     this.pendingTime = 0;
   }
 
+  @action
   pause() {
     if (this.pendingRequest) {
       cancelAnimationFrame(this.pendingRequest);
@@ -685,6 +687,7 @@ class World extends EventEmitter {
     return 'save' + crypt.bytesToBase64([].concat(...splits));
   }
 
+  @action
   usePackage(slot) {
     const { player } = this;
     const { goodData } = slot;

@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { View, ScrollView, Text, TouchableOpacity } from '../../components';
 import { ScrollableTabView } from '../../components/tabview';
-import { observable } from 'mobx';
+import { action, observable } from 'mobx';
 import { expr } from 'mobx-utils';
 import { observer } from 'mobx-react';
 import world from '../../logics/world';
@@ -71,14 +71,14 @@ export const BuildInventory = observer(function BuildInventory({
             <InventorySlotComp
               slot={slot}
               key={i}
-              onPress={() => selected.set(slot)}
+              onPress={action(() => selected.set(slot))}
             />
           ))}
         </ScrollView>
         {isEquip && (
           <TouchableOpacity
             className={styles.inventoryButton}
-            onPress={() => decomposeFromBuild(inventory)}
+            onPress={action(() => decomposeFromBuild(inventory))}
           >
             <Text>分解</Text>
           </TouchableOpacity>
@@ -86,10 +86,10 @@ export const BuildInventory = observer(function BuildInventory({
         {length > 0 && (
           <TouchableOpacity
             className={styles.inventoryButton}
-            onPress={() => {
+            onPress={action(() => {
               player.getInventory(inventory);
               selected.set(null);
-            }}
+            })}
           >
             <Text>领取</Text>
           </TouchableOpacity>
