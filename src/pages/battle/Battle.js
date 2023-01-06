@@ -80,12 +80,20 @@ export default class Battle extends Component {
     const { player } = world;
     if (world.paused || !player) {
       return (
-        <View className={[styles.container, styles.centerContainer]}>
-          <Text>当你不在的时候，时光依然飞逝。剩余{this.pendingTimeLabel}</Text>
-          <Text className={styles.skipFoward} onPress={this.skipForward}>
-            我只是想杀杀怪物。。（跳过）
-          </Text>
-        </View>
+        <NavBar
+          title="战斗"
+          leftNavTitle="切换人物"
+          onLeftPressed={this.onLeftPressed}
+        >
+          <View className={[styles.container, styles.centerContainer]}>
+            <Text>
+              当你不在的时候，时光依然飞逝。剩余{this.pendingTimeLabel}
+            </Text>
+            <Text className={styles.skipFoward} onPress={this.skipForward}>
+              我只是想杀杀怪物。。（跳过）
+            </Text>
+          </View>
+        </NavBar>
       );
     }
     return (

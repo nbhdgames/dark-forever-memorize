@@ -196,7 +196,6 @@ export default class TimeLine {
       this.current = min.at;
       this.tree.removeMin();
       if (!min.removed) {
-        console.log('Here', min.at);
         min.removed = true;
         min.func();
       }

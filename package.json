@@ -6,7 +6,7 @@
   "author": "tdzl2003 <tdzl2003@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "webpack build",
+    "build": "webpack build --mode=production",
     "watch": "webpack serve --mode=development"
   },
   "devDependencies": {
