@@ -84,8 +84,8 @@ const productNames = {
 };
 
 const SecretRecord = Record({
-  diamonds: 5000,
-  playerSlotCount: 5,
+  diamonds: 0,
+  playerSlotCount: 1,
   purchaseRate: 1,
   bowelLevel: 0,
 });
