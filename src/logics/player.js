@@ -1179,6 +1179,7 @@ export default class Player extends PlayerMeta {
   }
 
   // 从生产/奖励包裹里领取所有物品（如包裹已满，剩余的会保留在对应的包裹里。
+  @action
   getInventory(target) {
     target.replace(world.lootGoods(target));
     this.save();

@@ -2,7 +2,7 @@
  * Created by tdzl2003 on 2/1/17.
  */
 
-import { makeObservable, observable } from 'mobx';
+import { action, makeObservable, observable } from 'mobx';
 import { now } from 'mobx-utils';
 import PrivQueue from './PrivQueue';
 
@@ -90,6 +90,7 @@ export default class TimeLine {
     timer.removed = true;
   }
 
+  @action
   pause() {
     if (this.paused) {
       return;
@@ -101,6 +102,7 @@ export default class TimeLine {
     this.paused = true;
   }
 
+  @action
   resume() {
     if (!this.paused) {
       return;
@@ -113,6 +115,7 @@ export default class TimeLine {
     }
   }
 
+  @action
   setRate(rate) {
     if (this.rate === rate) {
       return;
