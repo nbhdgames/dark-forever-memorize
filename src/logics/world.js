@@ -434,7 +434,7 @@ class World extends EventEmitter {
     absorbed += value - realValue;
     value = realValue;
 
-    to.runAttrHooks(value, 'damaged', from);
+    value = to.runAttrHooks(value, 'damaged', from);
     message.sendDamage(damageType, from, to, skill, value, isCrit, absorbed);
     to.damage(damageType, from, value);
     return value;

@@ -744,9 +744,10 @@ export class Unit {
     return Math.random() > noDodgeRate;
   }
 
+  @action
   damage(type, from, v) {
     if (this.camp === Camps.ghost) {
-      return;
+      return false;
     }
     this.hp -= v;
     if (this.hp <= 0) {
@@ -755,6 +756,7 @@ export class Unit {
       // 无目标时受到攻击，则进入战斗。
       this.setTarget(from);
     }
+    return true;
   }
 
   @action
@@ -1642,9 +1644,11 @@ export class PlayerUnit extends Unit {
     return ret;
   }
 
-  @action
+  @override
   damage(type, from, v) {
-    super.damage(type, from, v);
+    if (!super.damage(type, from, v)) {
+      return;
+    }
     if (type !== 'melee') {
       const tmp = this.runAttrHooks(0, 'rpFromNonPhy');
       this.rp += tmp;
