@@ -815,7 +815,7 @@ export class Unit {
     if (!this.recoveryTimer) {
       this.recoveryTimer = this.timeline.parent.setTimeout(
         this.recovery,
-        1000 * RECOVERY_RATE * this.speedRate
+        (1000 * RECOVERY_RATE) / this.speedRate
       );
     }
   }
