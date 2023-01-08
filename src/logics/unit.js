@@ -771,7 +771,7 @@ export class Unit {
       this.castingTimer = null;
     }
     if (this.recoveryTimer) {
-      this.timeline.clearTimeout(this.recoveryTimer);
+      this.timeline.parent.clearTimeout(this.recoveryTimer);
       this.recoveryTimer = null;
     }
     for (const buff of this.buffs.slice(0)) {
@@ -813,9 +813,9 @@ export class Unit {
 
   startRecovery() {
     if (!this.recoveryTimer) {
-      this.recoveryTimer = this.timeline.setTimeout(
+      this.recoveryTimer = this.timeline.parent.setTimeout(
         this.recovery,
-        1000 * RECOVERY_RATE
+        1000 * RECOVERY_RATE * this.speedRate
       );
     }
   }
