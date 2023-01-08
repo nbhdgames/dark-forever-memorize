@@ -13,7 +13,7 @@ export default function Cp({ value, maxValue, bgColor, activeColor }) {
   return (
     <View className={styles.container}>
       {max.map((v, i) => (
-        <View className={style.content} key={i}>
+        <View className={styles.content} key={i}>
           <View
             className={styles.point}
             style={{ backgroundColor: value - 1 < i ? bgColor : activeColor }}

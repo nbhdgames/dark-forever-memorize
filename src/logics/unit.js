@@ -177,7 +177,7 @@ export class SkillState {
               break;
           }
           this.unit[k] -= cost;
-          this.unit.runAttrHooks(cost, camelCase('postCost', k));
+          this.unit.runAttrHooks(cost, camelCase('postCost' + k));
         }
       });
     }
@@ -696,16 +696,19 @@ export class Unit {
     if (!this.casting && skill && skill.canUse) {
       const { castTime } = skill.skillData;
       if (castTime) {
-        this.castingTimer = this.timeline.setTimeout(() => {
-          if (skill.canUse) {
-            this.runAttrHooks(null, 'preSkillEffect');
-            skill.effect();
-            this.runAttrHooks(null, 'postSkillEffect');
-          }
+        this.castingTimer = this.timeline.setTimeout(
+          action(() => {
+            if (skill.canUse) {
+              this.runAttrHooks(null, 'preSkillEffect');
+              skill.effect();
+              this.runAttrHooks(null, 'postSkillEffect');
+            }
 
-          this.castingTimer = null;
-          this.casting = null;
-        }, castTime);
+            this.castingTimer = null;
+            this.casting = null;
+          }),
+          castTime
+        );
         this.casting = skill;
       } else {
         this.runAttrHooks(null, 'preSkillEffect');

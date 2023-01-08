@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { View, ScrollView, Switch, Text } from '../../components';
-import { observable } from 'mobx';
+import { observable, action } from 'mobx';
 import { observer } from 'mobx-react';
 import { InventorySlotComp, qualityNames } from '../inventory/Inventory';
 import world from '../../logics/world';
@@ -14,7 +14,7 @@ import { alert } from '../../common/message';
 
 const noNotice = observable(false);
 
-function decompose(v, force = false, callback) {
+const decompose = action(function (v, force = false, callback) {
   const { player } = world;
   if (!force && v.quality >= 3 && !noNotice.get()) {
     // 史诗以上物品提示是否分解
@@ -50,7 +50,7 @@ function decompose(v, force = false, callback) {
   if (callback) {
     callback();
   }
-}
+});
 
 export function decomposeFromBuild(inventory, force = false) {
   const { player } = world;
@@ -73,7 +73,7 @@ const Decompose = observer(function Decompose() {
       <View className={styles.row}>
         <Text className={styles.container}>不提示分解高品质物品</Text>
         <Switch
-          onValueChange={(value) => noNotice.set(value)}
+          onValueChange={action((value) => noNotice.set(value))}
           value={noNotice.get()}
         />
       </View>

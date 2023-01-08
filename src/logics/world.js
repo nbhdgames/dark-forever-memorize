@@ -1,7 +1,13 @@
 /**
  * Created by tdzl2003 on 2/1/17.
  */
-import { observable, computed, action, makeObservable } from 'mobx';
+import {
+  observable,
+  computed,
+  action,
+  makeObservable,
+  runInAction,
+} from 'mobx';
 import { EventEmitter } from 'fbemitter';
 
 import Timeline from './Timeline';
@@ -15,6 +21,7 @@ import { maps, enemies, legends } from '../../data';
 import md5 from 'md5';
 import crypt from 'crypt';
 import { utf8 } from 'charenc';
+import { alert } from '../common/message';
 
 const DEBUG_RATE = 1;
 
@@ -76,6 +83,7 @@ class World extends EventEmitter {
     this.pendingTime = 0;
   }
 
+  @action
   pause() {
     if (this.pendingRequest) {
       cancelAnimationFrame(this.pendingRequest);
@@ -165,18 +173,18 @@ class World extends EventEmitter {
 
   // 迭代急速模式
   requestPending() {
-    this.pendingRequest = requestAnimationFrame(
-      action(() => {
-        const { updateRate } = this;
-        const ratedPending = this.pendingTime / updateRate;
-        const ratedRest = this.timeline.stepPaused(ratedPending);
+    this.pendingRequest = requestAnimationFrame(() => {
+      const { updateRate } = this;
+      const ratedPending = this.pendingTime / updateRate;
+      const ratedRest = this.timeline.stepPaused(ratedPending);
+      runInAction(() => {
         this.pendingTime = ratedRest * updateRate;
         this.player.timestamp += (ratedPending - ratedRest) * (updateRate - 1);
 
         if (!this.mapData.isDungeon) {
           this.updatedTime += ratedPending - ratedRest;
           if (this.updatedTime > 60 * 1000) {
-            this.updateRate *= 1.01;
+            this.updateRate *= 1.05;
             this.updatedTime -= 60 * 1000;
           }
         }
@@ -190,8 +198,8 @@ class World extends EventEmitter {
         } else {
           this.requestPending();
         }
-      })
-    );
+      });
+    });
   }
 
   constructor() {
@@ -408,7 +416,7 @@ class World extends EventEmitter {
       : value;
     value = to.runAttrHooks(value, 'willDamaged', from, damageType);
 
-    absorbed = value * (to[camelCase(damageType, 'absorb')] || 0);
+    absorbed = value * (to[camelCase(damageType + '-absorb')] || 0);
 
     switch (damageType) {
       case 'melee':
@@ -679,6 +687,7 @@ class World extends EventEmitter {
     return 'save' + crypt.bytesToBase64([].concat(...splits));
   }
 
+  @action
   usePackage(slot) {
     const { player } = this;
     const { goodData } = slot;

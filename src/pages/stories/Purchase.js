@@ -136,9 +136,7 @@ export default class StoryPurchaseList extends Component {
   };
 
   annoucement = () => {
-    this.context.navigator.push({
-      location: '/story/annoucement',
-    });
+    router.navigate('/story/annoucement');
   };
 
   renderFooter = () => {

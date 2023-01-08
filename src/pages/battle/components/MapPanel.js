@@ -313,24 +313,33 @@ export default class MapPanel extends Component {
     );
   };
 
-  @action
-  cancelPendingMap = (map, idx) => {
+  cancelPendingMap = action((map, idx) => {
     if (maps[map.key].isDungeon) {
       world.pendingMaps.splice(idx, 1);
     }
-  };
+  });
 
-  @action
-  onChangeMap = (map) => {
+  onChangeMap = action((map, confirmed) => {
+    if (!confirmed && world.pendingMaps.length >= 1) {
+      alert('提示', '是否确认离开进行中的地城？', [
+        {
+          text: '确认',
+          onPress: () => {
+            this.onChangeMap(map, true);
+          },
+        },
+        { text: '取消' },
+      ]);
+      return;
+    }
     if (world.map !== map.key) {
       world.map = map.key;
       world.pendingMaps.splice(0); // 移除所有队列
       checkStories();
     }
-  };
+  });
 
-  @action
-  onEnterDungeon = (map) => {
+  onEnterDungeon = action((map) => {
     if (world.pendingMaps.length > 0) {
       // 进入队列
       world.pendingMaps.splice(world.pendingMaps.length - 1, 0, map.key);
@@ -340,7 +349,7 @@ export default class MapPanel extends Component {
     world.pendingMaps.push(world.map);
     world.map = map.key;
     checkStories();
-  };
+  });
 
   @action
   buyTicket(map) {

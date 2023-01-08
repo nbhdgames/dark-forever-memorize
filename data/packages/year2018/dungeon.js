@@ -2,7 +2,7 @@ const { define, extend } = require('../util');
 
 extend('skills', 'year2018.heal', 'wolf.heal', {
   canUse(origin) {
-    return function(world, self) {
+    return function (world, self) {
       const { summoner } = self;
       if (!summoner) {
         return false;
@@ -14,7 +14,7 @@ extend('skills', 'year2018.heal', 'wolf.heal', {
     };
   },
   effect() {
-    return function(world, self, level) {
+    return function (world, self, level) {
       const target = this.summoner;
       if (!target) {
         return;
@@ -109,7 +109,7 @@ define('enemies', 'year2018.minimal.lightning', {
 extend('skills', 'year2018.shockWave', 'shockWave', {
   coolDown: 30000,
   canUse(origin) {
-    return function(world, self) {
+    return function (world, self) {
       if (self.runAttrHooks(100, 'bossState') > 75) {
         return false;
       }
@@ -130,9 +130,8 @@ const MINIMALS = [
 extend('buffs', 'year2018.summonMinimal', 'murloc.thumpHead', {
   name: '呼唤幼崽',
   effect() {
-    return function(world) {
+    return function (world) {
       const enemy = MINIMALS[Math.floor(Math.random() * 3)];
-      console.warn(enemy);
       world.addEnemy(enemy, null, 0, this.unit);
     };
   },
@@ -143,7 +142,7 @@ extend('skills', 'year2018.summonMinimal', 'murloc.thumpHead', {
   castTime: 0,
   antiBreak: 0.9,
   canUse(origin) {
-    return function(world, self) {
+    return function (world, self) {
       if (self.runAttrHooks(100, 'bossState') > 50) {
         return false;
       }
@@ -151,7 +150,7 @@ extend('skills', 'year2018.summonMinimal', 'murloc.thumpHead', {
     };
   },
   effect() {
-    return function(world, self, level) {
+    return function (world, self, level) {
       self.startRead('year2018.summonMinimal', 5001, null, this);
     };
   },
@@ -201,7 +200,7 @@ define('enemies', 'year2018.boss', {
     onSummonDeath() {
       this.addBuff('swordSkill', undefined, 0.01);
     },
-    atkSpeedMul(value) {
+    atkSpeedMul(world, value) {
       if (this.hp < this.maxHp * 0.25) {
         return value * 0.25;
       }
@@ -237,6 +236,7 @@ define('maps', 'year2018.dungeon', {
       monsters: [
         {
           type: 'year2018.boss',
+          delay: 1e9,
           total: 1,
         },
       ],
