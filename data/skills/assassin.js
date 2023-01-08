@@ -593,7 +593,7 @@ module.exports = [
     key: 'assassin.dodge',
     name: '闪避',
     description: (level) =>
-      `在未来3秒内，${(100 - 100 / (1 + level * 0.1)).toFixed(
+      `在未来5秒内，${(100 - 100 / (2 + level * 0.1)).toFixed(
         2
       )}%几率闪躲所有攻击`,
     coolDown: 15000,
@@ -605,8 +605,8 @@ module.exports = [
       return world.map !== 'home';
     },
     effect(world, self, level) {
-      const value = 1 + level * 0.1;
-      self.addBuff('assassin.dodge', 3000, value);
+      const value = 2 + level * 0.1;
+      self.addBuff('assassin.dodge', 5000, value);
     },
   },
 ];
