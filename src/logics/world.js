@@ -416,7 +416,7 @@ class World extends EventEmitter {
       : value;
     value = to.runAttrHooks(value, 'willDamaged', from, damageType);
 
-    absorbed = value * (to[camelCase(damageType, 'absorb')] || 0);
+    absorbed = value * (to[camelCase(damageType + '-absorb')] || 0);
 
     switch (damageType) {
       case 'melee':

@@ -177,7 +177,7 @@ export class SkillState {
               break;
           }
           this.unit[k] -= cost;
-          this.unit.runAttrHooks(cost, camelCase('postCost', k));
+          this.unit.runAttrHooks(cost, camelCase('postCost' + k));
         }
       });
     }
