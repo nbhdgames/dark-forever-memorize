@@ -39,7 +39,7 @@ export default class Enchants extends Component {
   selectItem(v) {
     this.selectedItem.set(v);
     if (v) {
-      this.locks.splice(0, null, ...v.affixes.map((v) => false));
+      this.locks.splice(0, this.locks.length, ...v.affixes.map((v) => false));
     } else {
       this.locks.splice(0);
     }
