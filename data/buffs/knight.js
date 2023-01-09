@@ -16,6 +16,7 @@ module.exports = [
     hooks: {
       damaged(value, from) {
         from.hp += value * this.arg;
+        return value;
       },
     },
   },
