@@ -425,7 +425,7 @@ class World extends EventEmitter {
       default: {
         value =
           (value - absorbed) /
-          (1 + (to[camelCase(damageType, 'resist')] || 0) / 200);
+          (1 + (to[camelCase(damageType + '-resist')] || 0) / 200);
         break;
       }
     }
