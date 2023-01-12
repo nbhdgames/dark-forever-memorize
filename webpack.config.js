@@ -68,45 +68,52 @@ module.exports = (_, argv) => {
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, './src/index.html'),
       }),
-      __DEV__ &&
-        new CopyPlugin({
-          patterns: [
-            {
-              from: path.resolve(__dirname, './src/manifest.json'),
-            },
-            {
-              from: path.resolve(__dirname, './src/assets/logo-192x192.png'),
-            },
-            {
-              from: path.resolve(
-                __dirname,
-                './src/assets/apple-touch-icon.png'
-              ),
-            },
-          ],
-        }),
-      __DEV__ &&
-        new WorkboxPlugin.GenerateSW({
-          clientsClaim: true,
-          skipWaiting: true,
-          runtimeCaching: [
-            {
-              urlPattern: /\.(?:png|jpg|jpeg|webp|gif|svg)$/,
-              handler: 'CacheFirst',
-              options: {
-                cacheName: 'images',
-              },
-            },
-            {
-              urlPattern: /\.(?:js|css|html)$/,
-              handler: 'StaleWhileRevalidate',
-              options: {
-                cacheName: 'resources',
-              },
-            },
-          ],
-        }),
-    ],
+    ].concat(
+      __DEV__
+        ? []
+        : [
+            new CopyPlugin({
+              patterns: [
+                {
+                  from: path.resolve(__dirname, './src/manifest.json'),
+                },
+                {
+                  from: path.resolve(
+                    __dirname,
+                    './src/assets/logo-192x192.png'
+                  ),
+                },
+                {
+                  from: path.resolve(
+                    __dirname,
+                    './src/assets/apple-touch-icon.png'
+                  ),
+                },
+              ],
+            }),
+
+            new WorkboxPlugin.GenerateSW({
+              clientsClaim: true,
+              skipWaiting: true,
+              runtimeCaching: [
+                {
+                  urlPattern: /\.(?:png|jpg|jpeg|webp|gif|svg)$/,
+                  handler: 'CacheFirst',
+                  options: {
+                    cacheName: 'images',
+                  },
+                },
+                {
+                  urlPattern: /\.(?:js|css|html)$/,
+                  handler: 'StaleWhileRevalidate',
+                  options: {
+                    cacheName: 'resources',
+                  },
+                },
+              ],
+            }),
+          ]
+    ),
     devServer: {
       hot: true,
       historyApiFallback: true,
