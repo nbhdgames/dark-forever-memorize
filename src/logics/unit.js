@@ -668,7 +668,7 @@ export class Unit {
   @action
   breakCasting(coolDown, force = false) {
     const { casting, reading } = this;
-    if (casting && !casting.notBreakable && !force) {
+    if (casting && !casting.notBreakable) {
       if (!force && !casting.testBreak()) {
         return;
       }
@@ -680,7 +680,7 @@ export class Unit {
         casting.setupCoolDown(coolDown);
       }
     }
-    if (reading && reading.skill && !reading.skill.notBreakable && !force) {
+    if (reading && reading.skill && !reading.skill.notBreakable) {
       if (!force && !reading.skill.testBreak()) {
         return;
       }
