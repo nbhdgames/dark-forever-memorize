@@ -48,7 +48,7 @@ export function TouchableOpacity({
   const handleMouseDown = useCallback(() => {
     state.timer = setTimeout(() => {
       onLongPress();
-    }, 1500);
+    }, 800);
   }, [onLongPress]);
   const HandleMouseUp = useCallback(() => {
     if (state.timer) {
