@@ -68,7 +68,7 @@ export function TouchableOpacity({
       onMouseDown={handleMouseDown}
       onTouchStart={handleMouseDown}
       onMouseUp={HandleMouseUp}
-      onTouchEnd={handleMouseUp}
+      onTouchEnd={HandleMouseUp}
       role="button"
     />
   );
