@@ -1,6 +1,8 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const { DefinePlugin } = require('webpack');
+const CopyPlugin = require('copy-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 module.exports = (_, argv) => {
   const __DEV__ = argv.mode === 'development';
@@ -66,7 +68,52 @@ module.exports = (_, argv) => {
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, './src/index.html'),
       }),
-    ],
+    ].concat(
+      __DEV__
+        ? []
+        : [
+            new CopyPlugin({
+              patterns: [
+                {
+                  from: path.resolve(__dirname, './src/manifest.json'),
+                },
+                {
+                  from: path.resolve(
+                    __dirname,
+                    './src/assets/logo-192x192.png'
+                  ),
+                },
+                {
+                  from: path.resolve(
+                    __dirname,
+                    './src/assets/apple-touch-icon.png'
+                  ),
+                },
+              ],
+            }),
+
+            new WorkboxPlugin.GenerateSW({
+              clientsClaim: true,
+              skipWaiting: true,
+              runtimeCaching: [
+                {
+                  urlPattern: /\.(?:png|jpg|jpeg|webp|gif|svg)$/,
+                  handler: 'CacheFirst',
+                  options: {
+                    cacheName: 'images',
+                  },
+                },
+                {
+                  urlPattern: /\.(?:js|css|html)$/,
+                  handler: 'StaleWhileRevalidate',
+                  options: {
+                    cacheName: 'resources',
+                  },
+                },
+              ],
+            }),
+          ]
+    ),
     devServer: {
       hot: true,
       historyApiFallback: true,
