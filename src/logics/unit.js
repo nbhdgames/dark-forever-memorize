@@ -122,14 +122,14 @@ export class SkillState {
     // Be overrided later.
   }
 
-  reduceCoolDown(time) {
+  reduceCoolDown(time, force) {
     if (!this.cooleddown) {
-      this.setupCoolDown(this.coolDownAt - this.timeline.getTime() - time);
+      this.setupCoolDown(this.coolDownAt - this.timeline.getTime() - time, true);
     }
   }
 
   @action
-  setupCoolDown(cd) {
+  setupCoolDown(cd, force) {
     const { skillData } = this;
     if (!skillData) {
       alert(this.type);
@@ -139,7 +139,7 @@ export class SkillState {
       (typeof skillData.coolDown === 'function'
         ? skillData.coolDown(this.getLevel(), this.unit)
         : skillData.coolDown);
-    if (this.coolDownAt - this.timeline.getTime() >= coolDown) {
+    if (!force && this.coolDownAt - this.timeline.getTime() >= coolDown) {
       // 如果由于打断等原因重复叠加冷却，选择最长的
       return;
     }
