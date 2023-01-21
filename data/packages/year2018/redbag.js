@@ -3,7 +3,7 @@ const { define, extend } = require('../util');
 define('goods', 'year2018.redbag', {
   type: 'package',
   name: '红包',
-  description: '狗年吉祥，旺，旺，旺！',
+  description: '兔年吉祥，新年快乐！',
   stack: 999,
   price: 1,
   requireInventory: 2,
