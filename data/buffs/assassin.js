@@ -42,7 +42,7 @@ module.exports = [
     name: '假死',
     description: '减少所受所有伤害的90%',
     hooks: {
-      willDamage(value) {
+      willDamaged(value) {
         return value * 0.1;
       },
     },
