@@ -11,6 +11,7 @@ import {
   ObservableMap,
   makeObservable,
   override,
+  toJS,
 } from 'mobx';
 import { expr, keepAlive } from 'mobx-utils';
 import camelCase from 'camelcase';
@@ -124,7 +125,10 @@ export class SkillState {
 
   reduceCoolDown(time, force) {
     if (!this.cooleddown) {
-      this.setupCoolDown(this.coolDownAt - this.timeline.getTime() - time, true);
+      this.setupCoolDown(
+        this.coolDownAt - this.timeline.getTime() - time,
+        true
+      );
     }
   }
 
@@ -1858,20 +1862,28 @@ export class EnemyUnit extends Unit {
       });
     }
 
-    for (let i = 0; i < quality; i++) {
-      const { affixes } = this.enemyData;
-      const keys = Object.keys(affixes);
-      const sum = keys.reduce((a, key) => a + affixes[key], 0);
-      let dice = Math.random() * sum;
-      this.affixes.push(
-        keys.find((key) => {
-          dice -= affixes[key];
-          if (dice <= 0) {
-            return true;
-          }
-          return false;
-        })
-      );
+    if (
+      savedState &&
+      savedState.affixes &&
+      savedState.affixes.length === quality
+    ) {
+      this.affixes = savedState.affixes;
+    } else {
+      for (let i = 0; i < quality; i++) {
+        const { affixes } = this.enemyData;
+        const keys = Object.keys(affixes);
+        const sum = keys.reduce((a, key) => a + affixes[key], 0);
+        let dice = Math.random() * sum;
+        this.affixes.push(
+          keys.find((key) => {
+            dice -= affixes[key];
+            if (dice <= 0) {
+              return true;
+            }
+            return false;
+          })
+        );
+      }
     }
 
     this.hookRecords = [];
@@ -2312,7 +2324,7 @@ export class EnemyUnit extends Unit {
     const ret = super.dumpState();
     ret.type = this.type;
     ret.quality = this.quality;
-    ret.affixes = this.affixes;
+    ret.affixes = toJS(this.affixes);
     if (this.cleanTimer) {
       ret.cleanTimer = this.cleanTimer.at - this.timeline.parent.getTime();
     }
