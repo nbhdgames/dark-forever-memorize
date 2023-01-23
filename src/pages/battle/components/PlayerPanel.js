@@ -179,7 +179,7 @@ export default class PlayerPanel extends Component {
               怒气消耗回复生命: <FixedField unit={unit} field="rpRecHp" />{' '}
             </Text>
             <Text>
-              吸血: <FixedField unit={unit} field="leech" mul={5} />{' '}
+              吸血: <FixedField unit={unit} field="leech" />{' '}
             </Text>
             <Seperator />
             <Text>
