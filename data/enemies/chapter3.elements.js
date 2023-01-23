@@ -19,7 +19,7 @@ module.exports = [
     maxHp: 40000,
     def: 150,
     atk: 500,
-    fireAbsorb: 0.6,
+    fireAbsorb: 1.2,
     atkSpeed: 0.4,
     exp: 180,
     level: 104,
@@ -61,7 +61,7 @@ module.exports = [
     maxHp: 40000,
     def: 150,
     atk: 400,
-    coldAbsorb: 0.6,
+    coldAbsorb: 1.2,
     atkSpeed: 0.4,
     exp: 180,
     level: 104,
@@ -144,11 +144,11 @@ module.exports = [
       {
         key: 'azathoth.transformIce',
         level: 0,
-      }
+      },
     ],
     stunResist: 3000,
     maxHp: 1000000,
-    fireAbsorb: 0.6,
+    fireAbsorb: 1.2,
     def: 150,
     atk: 1000,
     atkSpeed: 0.4,
@@ -193,7 +193,7 @@ module.exports = [
     def: 150,
     atk: 1000,
     atkSpeed: 0.4,
-    coldAbsorb: 0.6,
+    coldAbsorb: 1.2,
     exp: 8000,
     level: 110,
     loots: [
@@ -257,7 +257,7 @@ module.exports = [
       {
         key: 'azathoth.explode',
         level: 0,
-      }
+      },
     ],
     maxHp: 1000000,
     def: 0,
@@ -287,9 +287,7 @@ module.exports = [
     camp: 'enemy',
     race: 'unknown',
     career: 'melee',
-    skills: [
-
-    ],
+    skills: [],
     maxHp: 1000000,
     def: 150,
     darkAbsorb: 0.6,

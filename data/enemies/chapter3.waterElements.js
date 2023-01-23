@@ -60,7 +60,7 @@ module.exports = [
     maxHp: 60000,
     def: 150,
     atk: 700,
-    coldAbsorb: 0.6,
+    coldAbsorb: 1.2,
     atkSpeed: 0.4,
     exp: 220,
     level: 114,
@@ -150,7 +150,7 @@ module.exports = [
     ],
     stunResist: 3000,
     maxHp: 1600000,
-    coldAbsorb: 0.4,
+    coldAbsorb: 0.6,
     def: 150,
     atk: 2000,
     atkSpeed: 0.4,
@@ -179,7 +179,9 @@ module.exports = [
     career: 'melee',
 
     onPress(world) {
-      for (const unit of world.units.filter(v => v.camp === 'player' || v.camp === 'alien')) {
+      for (const unit of world.units.filter(
+        (v) => v.camp === 'player' || v.camp === 'alien'
+      )) {
         unit.addBuff('nynnroth.shield', 5000);
       }
       this.kill();

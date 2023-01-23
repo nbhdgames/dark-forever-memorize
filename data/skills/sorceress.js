@@ -4,7 +4,7 @@
 
 function addFlaming(self, target, value) {
   if (self.runAttrHooks(false, 'flaming')) {
-    const buff = target.buffs.find(v => v.group === 'flaming');
+    const buff = target.buffs.find((v) => v.group === 'flaming');
     if (buff) {
       buff.arg += value / 10;
       buff.resetTimer(10000);
@@ -16,7 +16,7 @@ function addFlaming(self, target, value) {
 
 function magicArtist(self, type) {
   const isMagicArtist = self.runAttrHooks(false, 'magicArtist');
-  const buff = self.buffs.find(v => v.group === 'magicState');
+  const buff = self.buffs.find((v) => v.group === 'magicState');
   if (isMagicArtist) {
     if (!buff) {
       self.addBuff('magicState', null, type, 'magicState');
@@ -30,7 +30,7 @@ function magicArtist(self, type) {
 }
 
 function addColdAir(target) {
-  const buff = target.buffs.find(v => v.group === 'coldAir');
+  const buff = target.buffs.find((v) => v.group === 'coldAir');
   if (buff) {
     buff.arg = Math.min(buff.arg + 0.01, 0.99);
   } else {
@@ -78,13 +78,13 @@ module.exports = [
     },
     castTime: 1500,
     cost: {
-      mp: self => 8 * (self.level * 0.2 + 1),
+      mp: (self) => 8 * (self.level * 0.2 + 1),
     },
     maxExp(level) {
       return level ** 2 * 600 + level * 1800 + 1200;
     },
     canUse(world, self) {
-      return !!self.target && self.target.coldAbsorb < 0.5;
+      return !!self.target && self.target.coldAbsorb < 1;
     },
     effect(world, self, level) {
       const { critRate, critBonus, target, int = 0 } = self;
@@ -112,7 +112,7 @@ module.exports = [
         target,
         this,
         self.getCritBonus(isCrit) * dmg,
-        isCrit,
+        isCrit
       );
 
       magicArtist(self, 'ice');
@@ -134,13 +134,13 @@ module.exports = [
     },
     castTime: 2000,
     cost: {
-      mp: self => 10 * (self.level * 0.2 + 1),
+      mp: (self) => 10 * (self.level * 0.2 + 1),
     },
     maxExp(level) {
       return level ** 2 * 600 + level * 1800 + 1200;
     },
     canUse(world, self) {
-      return !!self.target && self.target.fireAbsorb < 0.5;
+      return !!self.target && self.target.fireAbsorb < 1;
     },
     effect(world, self, level) {
       const { critRate, critBonus, target, int = 0 } = self;
@@ -160,7 +160,7 @@ module.exports = [
         target,
         this,
         self.getCritBonus(isCrit) * dmg,
-        isCrit,
+        isCrit
       );
       if (isCrit) {
         addFlaming(self, target, self.getCritBonus(isCrit) * dmg);
@@ -185,8 +185,9 @@ module.exports = [
       const { int } = self;
       const dmg =
         1 * getLevelBonus(self.level) * (int * 0.01 + 1) * self.dmgAdd;
-      return `释放${level + 3}个飞弹，每个对目标造成${dmg |
-        0}点秘法伤害。每个飞弹有20%的几率攻击随机的目标。`;
+      return `释放${level + 3}个飞弹，每个对目标造成${
+        dmg | 0
+      }点秘法伤害。每个飞弹有20%的几率攻击随机的目标。`;
     },
     coolDown: 1500,
     maxExp(level) {
@@ -200,7 +201,7 @@ module.exports = [
       const dmg =
         1 * getLevelBonus(self.level) * (int * 0.01 + 1) * self.dmgAdd;
       const validTargets = world.units.filter(
-        v => v !== currentTarget && self.willAttack(v),
+        (v) => v !== currentTarget && self.willAttack(v)
       );
 
       for (let i = 0; i < level + 3; i++) {
@@ -221,7 +222,7 @@ module.exports = [
           target,
           this,
           self.getCritBonus(isCrit) * dmg,
-          isCrit,
+          isCrit
         );
       }
       magicArtist(self, 'wind');
@@ -246,7 +247,7 @@ module.exports = [
       return level ** 2 * 200 + level * 600 + 400;
     },
     canUse(world, self) {
-      return !!self.target && self.target.fireAbsorb < 0.5;
+      return !!self.target && self.target.fireAbsorb < 1;
     },
     effect(world, self, level) {
       const { target, int = 0 } = self;
@@ -266,7 +267,7 @@ module.exports = [
         target,
         this,
         self.getCritBonus(isCrit) * dmg,
-        isCrit,
+        isCrit
       );
       if (isCrit) {
         addFlaming(self, target, self.getCritBonus(isCrit) * dmg);
@@ -282,18 +283,20 @@ module.exports = [
       return `冻结全体目标${level / 2 + 1}秒。`;
     },
     castTime: 500,
-    coolDown: level => 10000,
+    coolDown: (level) => 10000,
     maxExp(level) {
       return level ** 2 * 200 + level * 600 + 400;
     },
     canUse(world, self) {
-      return !!world.units.find(v => self.willAttack(v));
+      return !!world.units.find((v) => self.willAttack(v));
     },
     effect(world, self, level) {
-      const targets = world.units.filter(v => self.willAttack(v));
+      const targets = world.units.filter(
+        (v) => self.willAttack(v) && v.coldAbsorb < 1
+      );
       const coldAir = self.runAttrHooks(false, 'coldAir');
 
-      targets.forEach(target => {
+      targets.forEach((target) => {
         if (world.testDodge(self, target, this)) {
           return;
         }
@@ -324,7 +327,7 @@ module.exports = [
       const rate = ((int * 0.01 + 1) * (level * 0.2 + 1)) / 3; // 每点法力抵挡伤害。
       const total = rate * getLevelBonus(self.level) * 50; // 最多吸收伤害
       return `消耗法力值以吸收伤害，每点法力值吸收${rate.toFixed(
-        1,
+        1
       )}点伤害，最多吸收${total | 0}点伤害`;
     },
     coolDown: 10000,
@@ -366,9 +369,9 @@ module.exports = [
         (int * 0.01 + 1) *
         (level * 0.3 + 1) *
         self.dmgAdd;
-      const targets = world.units.filter(v => self.willAttack(v));
+      const targets = world.units.filter((v) => self.willAttack(v));
 
-      targets.forEach(target => {
+      targets.forEach((target) => {
         if (world.testDodge(self, target, this)) {
           return;
         }
@@ -379,7 +382,7 @@ module.exports = [
           target,
           this,
           self.getCritBonus(isCrit) * dmg,
-          isCrit,
+          isCrit
         );
         if (isCrit) {
           addFlaming(self, target, self.getCritBonus(isCrit) * dmg);
@@ -424,8 +427,9 @@ module.exports = [
       if (self.runAttrHooks(false, 'randomTransform')) {
         time *= 1.5;
       }
-      return `变形一个随机的目标，使其不再攻击，持续${time |
-        0}秒。变形期间不能进行任何攻击或施法。受到任何伤害均会解除此效果。`;
+      return `变形一个随机的目标，使其不再攻击，持续${
+        time | 0
+      }秒。变形期间不能进行任何攻击或施法。受到任何伤害均会解除此效果。`;
     },
     castTime: 1000,
     coolDown: 10000,
@@ -434,18 +438,18 @@ module.exports = [
     },
     canUse(world, self) {
       return !!world.units.find(
-        v =>
+        (v) =>
           v !== self.target &&
           self.willAttack(v) &&
-          v.runAttrHooks(false, 'transformed') === false,
+          v.runAttrHooks(false, 'transformed') === false
       );
     },
     effect(world, self, level) {
       const targets = world.units.filter(
-        v =>
+        (v) =>
           v !== self.target &&
           self.willAttack(v) &&
-          v.runAttrHooks(false, 'transformed') === false,
+          v.runAttrHooks(false, 'transformed') === false
       );
       const target = targets[Math.floor(Math.random() * targets.length)];
       if (world.testDodge(self, target, this)) {
@@ -505,10 +509,10 @@ module.exports = [
     },
     canUse(world, self) {
       const target = world.units.find(
-        v =>
+        (v) =>
           self.willAttack(v) &&
           v.runAttrHooks(false, 'freezed') &&
-          v.coldAbsorb < 0.5,
+          v.coldAbsorb < 1
       );
       return !!target;
     },
@@ -523,10 +527,10 @@ module.exports = [
         target = self.target;
       } else {
         target = world.units.find(
-          v =>
+          (v) =>
             self.willAttack(v) &&
             v.runAttrHooks(false, 'freezed') &&
-            v.coldAbsorb < 0.5,
+            v.coldAbsorb < 0.5
         );
         freezed = target && target.runAttrHooks(false, 'freezed');
       }
@@ -549,7 +553,7 @@ module.exports = [
         target,
         this,
         self.getCritBonus(isCrit) * dmg,
-        isCrit,
+        isCrit
       );
       target.removeBuff(freezed);
       if (self.runAttrHooks(false, 'coldAir')) {
@@ -583,7 +587,7 @@ module.exports = [
         'awaking',
         3000,
         ((0.3 + level * 0.01) * self.maxMp) / 3,
-        this,
+        this
       );
       magicArtist(self, 'wind');
     },
@@ -592,27 +596,27 @@ module.exports = [
     key: 'counterSpelling',
     name: '法术反制',
     element: 'wind',
-    description: level =>
+    description: (level) =>
       `反制一个目标，打断其正在释放的技能，并阻止其5秒内释放相同的技能`,
-    coolDown: level => 10000 / (1 + level * 0.1),
+    coolDown: (level) => 10000 / (1 + level * 0.1),
     maxExp(level) {
       return level ** 2 * 200 + level * 600 + 400;
     },
     canUse(world, self) {
       const target = world.units.find(
-        v =>
+        (v) =>
           self.willAttack(v) &&
           ((v.casting !== null && !v.casting.notBreakable) ||
-            (v.reading !== null && !v.reading.notBreakable)),
+            (v.reading !== null && !v.reading.notBreakable))
       );
       return !!target;
     },
     effect(world, self, level) {
       const target = world.units.find(
-        v =>
+        (v) =>
           self.willAttack(v) &&
           ((v.casting !== null && !v.casting.notBreakable) ||
-            (v.reading !== null && !v.reading.notBreakable)),
+            (v.reading !== null && !v.reading.notBreakable))
       );
       world.sendSkillUsage(self, null, this);
       target.breakCasting(5000);
@@ -638,8 +642,9 @@ module.exports = [
         (int * 0.01 + 1) *
         (level * 0.3 + 1) *
         self.dmgAdd;
-      return `对最近的5个敌人造成${dmg | 0}点伤害，并使它们眩晕${level / 2 +
-        1}秒。`;
+      return `对最近的5个敌人造成${dmg | 0}点伤害，并使它们眩晕${
+        level / 2 + 1
+      }秒。`;
     },
     effect(world, self, level) {
       const { critRate, critBonus, int = 0 } = self;
@@ -649,9 +654,11 @@ module.exports = [
         (int * 0.01 + 1) *
         (level * 0.3 + 1) *
         self.dmgAdd;
-      const targets = world.units.filter(v => self.willAttack(v));
+      const targets = world.units.filter(
+        (v) => self.willAttack(v) && v.fireAbsorb < 1
+      );
 
-      targets.slice(0, 4).forEach(target => {
+      targets.slice(0, 4).forEach((target) => {
         if (world.testDodge(self, target, this)) {
           return;
         }
@@ -662,7 +669,7 @@ module.exports = [
           target,
           this,
           self.getCritBonus(isCrit) * dmg,
-          isCrit,
+          isCrit
         );
         target.stun(level / 2 + 1);
         if (isCrit) {

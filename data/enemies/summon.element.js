@@ -11,7 +11,7 @@ function getLevelBonus(level) {
   }
 }
 
-const elements =  [
+const elements = [
   {
     key: 'summon.element.fire',
     name: '火焰精灵',
@@ -20,7 +20,7 @@ const elements =  [
     race: 'unknown',
     career: 'melee',
     maxHp: 10,
-    fireAbsorb: 0.6,
+    fireAbsorb: 1.2,
     skills: [
       {
         key: 'fireElement.fireball',
@@ -31,7 +31,7 @@ const elements =  [
       {
         key: 'fireElement.flameStrike',
         level: 0,
-      }
+      },
     ],
     hooks: {
       speedRateMul(world, value, target) {
@@ -41,13 +41,19 @@ const elements =  [
         return this.summoner.runAttrHooks(value, 'speedRateMul');
       },
       willAttack(world, value, target) {
-        return value && target.fireAbsorb < 0.5;
+        return value && target.fireAbsorb < 1;
       },
       willDamage(world, value, to, damageType) {
         if (!this.summoner) {
           return value;
         }
-        return this.summoner.runAttrHooks(value, 'summonerWillDamage', this, to, damageType);
+        return this.summoner.runAttrHooks(
+          value,
+          'summonerWillDamage',
+          this,
+          to,
+          damageType
+        );
       },
       elementType(world, value) {
         return 'fire';
@@ -58,7 +64,7 @@ const elements =  [
         }
         const { player } = this.summoner;
         const level = player.getSkillLevel('summonFire');
-        return this.summoner.maxHp * 0.2 * (1 + level / 10) ;
+        return this.summoner.maxHp * 0.2 * (1 + level / 10);
       },
       critRate(world, value) {
         if (!this.summoner) {
@@ -78,7 +84,13 @@ const elements =  [
         }
         const { player } = this.summoner;
         const level = player.getSkillLevel('summonFire');
-        return 5 * getLevelBonus(player.level) * (this.summoner.int*0.01 + 1) * (level*0.3 + 1) * this.summoner.dmgAdd;
+        return (
+          5 *
+          getLevelBonus(player.level) *
+          (this.summoner.int * 0.01 + 1) *
+          (level * 0.3 + 1) *
+          this.summoner.dmgAdd
+        );
       },
       def(world, value) {
         return this.summoner.def;
@@ -93,7 +105,7 @@ const elements =  [
     race: 'unknown',
     career: 'melee',
     maxHp: 10,
-    iceAbsorb: 0.6,
+    iceAbsorb: 1.2,
     skills: [
       {
         key: 'waterElement.waterArrow',
@@ -102,7 +114,7 @@ const elements =  [
       {
         key: 'iceNova',
         level: 0,
-      }
+      },
     ],
     v2Skills: [
       {
@@ -118,13 +130,19 @@ const elements =  [
         return this.summoner.runAttrHooks(value, 'speedRateMul');
       },
       willAttack(world, value, target) {
-        return value && target.coldAbsorb < 0.5;
+        return value && target.coldAbsorb < 1;
       },
       willDamage(effect, value, to, damageType) {
         if (!this.summoner) {
           return value;
         }
-        return this.summoner.runAttrHooks(value, 'summonerWillDamage', this, to, damageType);
+        return this.summoner.runAttrHooks(
+          value,
+          'summonerWillDamage',
+          this,
+          to,
+          damageType
+        );
       },
       elementType(world, value) {
         return 'water';
@@ -135,7 +153,7 @@ const elements =  [
         }
         const { player } = this.summoner;
         const level = player.getSkillLevel('summonWater');
-        return this.summoner.maxHp * 0.2 * (1 + level / 10) ;
+        return this.summoner.maxHp * 0.2 * (1 + level / 10);
       },
       critRate(world, value) {
         if (!this.summoner) {
@@ -155,7 +173,13 @@ const elements =  [
         }
         const { player } = this.summoner;
         const level = player.getSkillLevel('summonWater');
-        return 4 * getLevelBonus(player.level) * (this.summoner.int*0.01 + 1) * (level*0.3 + 1) * this.summoner.dmgAdd;
+        return (
+          4 *
+          getLevelBonus(player.level) *
+          (this.summoner.int * 0.01 + 1) *
+          (level * 0.3 + 1) *
+          this.summoner.dmgAdd
+        );
       },
       def(world, value) {
         if (!this.summoner) {
@@ -183,7 +207,7 @@ const elements =  [
       {
         key: 'summon.earth.comeToMe',
         level: 0,
-      }
+      },
     ],
     v2Skills: [
       {
@@ -207,7 +231,13 @@ const elements =  [
         if (!this.summoner) {
           return value;
         }
-        return this.summoner.runAttrHooks(value, 'summonerWillDamage', this, to, damageType);
+        return this.summoner.runAttrHooks(
+          value,
+          'summonerWillDamage',
+          this,
+          to,
+          damageType
+        );
       },
       elementType(world, value) {
         return 'melee';
@@ -218,7 +248,7 @@ const elements =  [
         }
         const { player } = this.summoner;
         const level = player.getSkillLevel('summonEarth');
-        return this.summoner.maxHp * 0.4 * (1 + level / 10) ;
+        return this.summoner.maxHp * 0.4 * (1 + level / 10);
       },
       critRate(world, value) {
         if (!this.summoner) {
@@ -238,7 +268,13 @@ const elements =  [
         }
         const { player } = this.summoner;
         const level = player.getSkillLevel('summonEarth');
-        return 6 * getLevelBonus(player.level) * (this.summoner.int*0.01 + 1) * (level*0.3 + 1) * this.summoner.dmgAdd;
+        return (
+          6 *
+          getLevelBonus(player.level) *
+          (this.summoner.int * 0.01 + 1) *
+          (level * 0.3 + 1) *
+          this.summoner.dmgAdd
+        );
       },
       def(world, value) {
         if (!this.summoner) {
@@ -256,7 +292,7 @@ const elements =  [
     race: 'unknown',
     career: 'melee',
     maxHp: 10,
-    fireAbsorb: 0.6,
+    lightningAbsorb: 1.2,
     skills: [
       {
         key: 'lightningElement.chainingLightning',
@@ -277,13 +313,19 @@ const elements =  [
         return this.summoner.runAttrHooks(value, 'speedRateMul');
       },
       willAttack(world, value, target) {
-        return value && target.fireAbsorb < 0.5;
+        return value && target.lightningAbsorb < 0.5;
       },
       willDamage(world, value, to, damageType) {
         if (!this.summoner) {
           return value;
         }
-        return this.summoner.runAttrHooks(value, 'summonerWillDamage', this, to, damageType);
+        return this.summoner.runAttrHooks(
+          value,
+          'summonerWillDamage',
+          this,
+          to,
+          damageType
+        );
       },
       elementType(world, value) {
         return 'lightning';
@@ -294,7 +336,7 @@ const elements =  [
         }
         const { player } = this.summoner;
         const level = player.getSkillLevel('summonLightning');
-        return this.summoner.maxHp * 0.2 * (1 + level / 10) ;
+        return this.summoner.maxHp * 0.2 * (1 + level / 10);
       },
       critRate(world, value) {
         if (!this.summoner) {
@@ -314,7 +356,13 @@ const elements =  [
         }
         const { player } = this.summoner;
         const level = player.getSkillLevel('summonLightning');
-        return 5 * getLevelBonus(player.level) * (this.summoner.int*0.01 + 1) * (level*0.3 + 1) * this.summoner.dmgAdd;
+        return (
+          5 *
+          getLevelBonus(player.level) *
+          (this.summoner.int * 0.01 + 1) *
+          (level * 0.3 + 1) *
+          this.summoner.dmgAdd
+        );
       },
       def(world, value) {
         return this.summoner.def * 2;
@@ -323,18 +371,11 @@ const elements =  [
   },
 ];
 
-const elementV2 = elements.map(v => ({
+const elementV2 = elements.map((v) => ({
   ...v,
   key: v.key + '.2',
   name: 'II型' + v.name,
-  skills: [
-    ...v.skills,
-    ...v.v2Skills,
-  ],
+  skills: [...v.skills, ...v.v2Skills],
 }));
 
-
-module.exports = [
-  ...elements,
-  ...elementV2,
-];
+module.exports = [...elements, ...elementV2];

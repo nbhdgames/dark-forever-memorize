@@ -13,7 +13,7 @@ module.exports = [
     maxHp: 600,
     exp: 30,
     atk: 25,
-    fireAbsorb: 0.6,
+    fireAbsorb: 1.2,
     level: 50,
     atkSpeed: 0.4,
     skills: [
