@@ -229,7 +229,7 @@ class Game {
       this.medicineExp -= this.maxMedicineExp;
       const chooses = Object.keys(medicines);
       const key = chooses[(Math.random() * chooses.length) | 0] || chooses[0];
-      this.medicineLevel.set(key, this.medicineLevel.get(key) + 1);
+      this.medicineLevel.set(key, (this.medicineLevel.get(key) || 0) + 1);
       ret.push(key);
     }
     return ret;

@@ -16,7 +16,7 @@ import { alert, prompt } from '../../common/message';
 export default class Medicine extends Component {
   renderMedicine = (key) => {
     const data = medicines[key];
-    const level = game.medicineLevel.get(key);
+    const level = game.medicineLevel.get(key) || 0;
     const restLevel = game.totalMedicineLevel - level;
 
     return (

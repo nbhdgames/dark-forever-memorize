@@ -10,13 +10,13 @@ div.className = styles.root;
 document.body.appendChild(div);
 render(<App />, div);
 
-window.addEventListener('unload', () => {
-  console.log('Save before unload');
-  game.save();
-  world.player?.save();
-});
+// window.addEventListener('unload', () => {
+//   console.log('Save before unload');
+//   game.save();
+//   world.player?.save();
+// });
 
-window.addEventListener('visibilitychange', () => {
-  game.save();
-  world.player?.save();
-});
+// window.addEventListener('visibilitychange', () => {
+//   game.save();
+//   world.player?.save();
+// });
