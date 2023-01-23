@@ -3,7 +3,7 @@
  */
 
 module.exports = {
-  version: '2023.1.21',
+  version: '2023.1.23',
   description: `永夜玩家交流QQ群：614658451，欢迎加入了解最新永夜资讯。
 请各路魔改版本/MOD作者保留上述群号，谢谢。
 
