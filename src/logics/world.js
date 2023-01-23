@@ -534,8 +534,8 @@ class World extends EventEmitter {
             slots.push(slot);
           }
         } else if (type === 'equip' || type === 'specialEquip') {
-          // 怪物等级基础向下浮动30%
-          const eLevel = Math.ceil(level * (Math.random() * 0.2 + 0.8));
+          const minLevel = Math.max(1, Math.min(level - 15, level * 0.8));
+          const eLevel = Math.ceil(minLevel + Math.random() * (level - minLevel));
           let slot;
 
           if (type === 'specialEquip') {
