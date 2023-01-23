@@ -213,7 +213,9 @@ define('maps', 'year2018.dungeon', {
   name: '年兽巢穴',
   isDungeon: true,
   outside: 'home',
-  requirement: {},
+  requirement: {
+    atLeastMaxLevel: 70,
+  },
   phases: [
     {
       description: '沿着阴森的小路前进，寻找年兽的踪迹。',

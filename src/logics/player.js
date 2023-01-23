@@ -96,6 +96,13 @@ const EQUIP_POSITION_NAMES = {
   weapon: '武器',
 };
 
+const EQUIP_POSITION_ORDER = {
+  plastron: 1,
+  gaiter: 2,
+  ornament: 3,
+  weapon: 0,
+};
+
 export function transformEquipLevel(level) {
   if (level <= 120) {
     return Math.ceil(level / 2);
@@ -411,6 +418,11 @@ export class InventorySlot {
   get equipPositionName() {
     const { position } = this.goodData;
     return EQUIP_POSITION_NAMES[position];
+  }
+
+  get equipPositionOrder() {
+    const { position } = this.goodData;
+    return EQUIP_POSITION_ORDER[position];
   }
 
   @computed
@@ -1261,6 +1273,14 @@ export default class Player extends PlayerMeta {
       }
       if (a.displayQuality !== b.displayQuality) {
         return a.displayQuality - b.displayQuality;
+      }
+      if (atype === 'equip') {
+        if (a.equipPositionOrder !== b.equipPositionOrder) {
+          return a.equipPositionOrder - b.equipPositionOrder;
+        }
+        if (a.level !== b.level) {
+          return a.level - b.level;
+        }
       }
       return compMap(a.key, b.key, goodOrder);
     });
