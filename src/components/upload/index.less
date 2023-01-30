@@ -1,0 +1,27 @@
+.upload {
+  width: 100vw;
+  height: 60px;
+  input {
+    display: none;
+  }
+}
+
+.content {
+  cursor: pointer;
+  line-height: 50px;
+  display: flex;
+  margin: 5px;
+  border-width: solid 0.5px #999;
+  border-radius: 5px;
+  background-color: #aacaff;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  &:active,
+  &:focus {
+    background: fade(#fff, 40%);
+  }
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+
