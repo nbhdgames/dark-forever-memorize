@@ -238,7 +238,7 @@ define('maps', 'nightmare.knight', {
   stunResist: 10000,
   resetPrice: 285,
   level: 285,
-  exp: 10000000,
+  exp: 5000000,
   loots: [
     {
       key: 'gold',

@@ -233,7 +233,10 @@ export class DungeonState extends EnemyBorn {
       if (ticketCount > 0) {
         toast(`战胜了${this.mapData.name}中的敌人，获得了大量奖励。`);
         const { exp = 0, level, loots } = this.mapData;
-        world.gotExp(exp, transformEquipLevel(level));
+        world.gotExp(
+          exp * Math.pow(1.5, world._endlessLevel),
+          transformEquipLevel(level)
+        );
         world.loots(loots, level, 0);
         world.lootEndless();
 

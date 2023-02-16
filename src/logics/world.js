@@ -549,7 +549,9 @@ class World extends EventEmitter {
           }
         } else if (type === 'equip' || type === 'specialEquip') {
           const minLevel = Math.max(1, Math.min(level - 15, level * 0.8));
-          const eLevel = Math.ceil(minLevel + Math.random() * (level - minLevel));
+          const eLevel = Math.ceil(
+            minLevel + Math.random() * (level - minLevel)
+          );
           let slot;
 
           if (type === 'specialEquip') {
@@ -607,6 +609,7 @@ class World extends EventEmitter {
           let total = (Math.random() * (max - min + 1) + min) * count;
           if (key === 'gold') {
             total *= this.playerUnit.gf;
+            total *= Math.pow(1.5, this._endlessLevel);
           }
           const slot = new InventorySlot('loot');
           slot.key = key;
