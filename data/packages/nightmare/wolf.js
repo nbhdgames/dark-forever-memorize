@@ -10,7 +10,7 @@ define('skills', 'nightmare.wolf.hunter', {
   name: '召唤陷阱',
   castTime: 25000,
   canUse(world, self) {
-    return !world.units.find(v => v.type === 'nightmare.wolf.hunter.trigger');
+    return !world.units.find((v) => v.type === 'nightmare.wolf.hunter.trigger');
   },
   effect(world, self, level) {
     world.addEnemy('nightmare.wolf.hunter.trigger', null, 0, self);
@@ -97,7 +97,7 @@ extend('skills', 'nightmare.wolf.1', 'wolf.call', {
   coolDown: 30000,
   notBreakable: true,
   canUse(origin) {
-    return function(world, self) {
+    return function (world, self) {
       if (self.runAttrHooks(100, 'bossState') > 75) {
         return false;
       }
@@ -105,7 +105,7 @@ extend('skills', 'nightmare.wolf.1', 'wolf.call', {
     };
   },
   effect() {
-    return function(world, self, level) {
+    return function (world, self, level) {
       world.sendSkillUsage(self, null, this);
       world.addEnemy('nightmare.wolf.healer', null, 0, self);
       world.addEnemy('nightmare.wolf.minium', null, 0, self);
@@ -118,7 +118,7 @@ extend('skills', 'nightmare.wolf.2', 'knight.melee1', {
   name: '爪击',
   coolDown: 2000,
   canUse(origin) {
-    return function(world, self) {
+    return function (world, self) {
       if (self.runAttrHooks(100, 'bossState') > 50) {
         return false;
       }
@@ -130,7 +130,7 @@ extend('skills', 'nightmare.wolf.2', 'knight.melee1', {
 extend('skills', 'nightmare.wolf.3', 'rosa.angry', {
   name: '嗜血',
   canUse(origin) {
-    return function(world, self) {
+    return function (world, self) {
       if (self.runAttrHooks(100, 'bossState') > 25) {
         return false;
       }
@@ -204,6 +204,7 @@ define('enemies', 'nightmare.wolf.king', {
 define('maps', 'nightmare.wolf', {
   name: '噩梦-狼王',
   isDungeon: true,
+  isEndless: true,
   outside: 'home',
   group: 'nightmare.1',
   requirement: {

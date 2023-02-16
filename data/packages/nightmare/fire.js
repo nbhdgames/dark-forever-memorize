@@ -15,7 +15,7 @@ define('skills', 'nightmare.fire.kakarif.1', {
     return true;
   },
   effect(world, self, level) {
-    for (const target of world.units.filter(v => self.willAttack(v))) {
+    for (const target of world.units.filter((v) => self.willAttack(v))) {
       world.sendDamage('melee', self, target, this, self.atk, true);
     }
   },
@@ -35,7 +35,7 @@ define('skills', 'nightmare.fire.kakarif.2', {
   effect(world, self, level) {
     let dmg = self.atk;
     for (const target of world.units.filter(
-      v => v.type === 'nightmare.fire.minimal',
+      (v) => v.type === 'nightmare.fire.minimal'
     )) {
       target.kill();
       dmg += self.atk;
@@ -43,7 +43,7 @@ define('skills', 'nightmare.fire.kakarif.2', {
     for (let i = 0; i < 8; i++) {
       world.addEnemy('nightmare.fire.minimal', null, 0, self);
     }
-    for (const target of world.units.filter(v => self.willAttack(v))) {
+    for (const target of world.units.filter((v) => self.willAttack(v))) {
       world.sendDamage('fire', self, target, this, dmg / 2, true);
     }
   },
@@ -155,7 +155,7 @@ define('enemies', 'nightmare.fire.kakarif', {
   camp: 'enemy',
   race: 'unknown',
   career: 'melee',
-  maxHp: 640000000,
+  maxHp: 160000000,
   def: 100,
   allResist: 50,
   exp: 2400,
@@ -222,6 +222,7 @@ define('enemies', 'nightmare.fire.kakarif', {
 define('maps', 'nightmare.fire', {
   name: '噩梦-卡卡列夫',
   isDungeon: true,
+  isEndless: true,
   outside: 'home',
   group: 'nightmare.2',
   requirement: {

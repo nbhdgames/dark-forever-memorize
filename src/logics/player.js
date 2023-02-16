@@ -28,7 +28,7 @@ import {
 import doMigrates from './migrates';
 import { preSave } from '../common/utils';
 
-const MAX_TICKET_STACK = 20;
+const MAX_TICKET_STACK = 50;
 
 const goodOrder = {};
 Object.keys(goods).forEach((v, i) => (goodOrder[v] = i));
@@ -116,11 +116,47 @@ export function transformEquipLevel(level) {
   return 70;
 }
 
-const dungeonNames = {
-  'nightmare.1': '噩梦钥石I',
-  'nightmare.2': '噩梦钥石II',
-  'nightmare.3': '噩梦钥石III',
-};
+export function getEndlessLevel(name) {
+  if (name.startsWith('nightmare.')) {
+    return Number(name.substr(10)) | 0;
+  }
+}
+
+export const romes = [
+  '',
+  'I',
+  'II',
+  'III',
+  'IV',
+  'V',
+  'VI',
+  'VII',
+  'VIII',
+  'IX',
+  'X',
+  'XI',
+  'XII',
+  'XIII',
+  'XIV',
+  'XV',
+  'XVI',
+  'XVII',
+  'XVIII',
+  'XIX',
+  'XX',
+];
+
+export function getEndlessKeyName(name) {
+  const lvl = getEndlessLevel(name);
+  if (lvl) {
+    return `无尽噩梦` + (romes[lvl] || lvl);
+  }
+}
+
+export function getEndlessMapLevel(name) {
+  const lvl = getEndlessLevel(name);
+  return 250 + 35 * (lvl - 1);
+}
 const dungeonLevel = {
   'nightmare.1': 250,
   'nightmare.2': 285,
@@ -322,7 +358,7 @@ export class InventorySlot {
     }
     if (this.key === 'ticket') {
       return `钥石:${
-        dungeonNames[this.dungeonKey] || maps[this.dungeonKey].name
+        getEndlessKeyName(this.dungeonKey) || maps[this.dungeonKey].name
       }`;
     }
     if (this.legendData) {
@@ -812,6 +848,13 @@ export default class Player extends PlayerMeta {
       this.inventory.push(
         new InventorySlot('inventory').fromJS(v.inventory[i] || {})
       );
+      const { key, dungeonKey } = this.inventory[i];
+      if (key == 'ticket') {
+        const lvl = getEndlessLevel(dungeonKey);
+        if (lvl && lvl > game.highestEndlessLevel) {
+          game.highestEndlessLevel = lvl;
+        }
+      }
     }
 
     for (let i = 0; v.buildInventory && i < v.buildInventory.length; i++) {
@@ -870,7 +913,7 @@ export default class Player extends PlayerMeta {
     this.dungeonTickets.clear();
     if (isObservableMap(v.dungeonTickets)) {
       for (const key of Object.keys(maps)) {
-        if (maps[key].isDungeon) {
+        if (maps[key].isDungeon && !maps[key].isEndless) {
           const defaultTickets =
             typeof maps[key].defaultTicketCount === 'number'
               ? maps[key].defaultTicketCount
@@ -888,7 +931,7 @@ export default class Player extends PlayerMeta {
       }
     } else {
       for (const key of Object.keys(maps)) {
-        if (maps[key].isDungeon) {
+        if (maps[key].isDungeon && !maps[key].isEndless) {
           const defaultTickets =
             typeof maps[key].defaultTicketCount === 'number'
               ? maps[key].defaultTicketCount
@@ -1060,6 +1103,13 @@ export default class Player extends PlayerMeta {
       target[index].count += canPlace;
       good.count -= canPlace;
     }
+
+    if (key === 'ticket') {
+      const lvl = getEndlessLevel(good.dungeonKey);
+      if (lvl && lvl > game.highestEndlessLevel) {
+        game.highestEndlessLevel = lvl;
+      }
+    }
     good.clear();
   }
 
@@ -1124,7 +1174,7 @@ export default class Player extends PlayerMeta {
 
   countTicket(dungeonKey) {
     let count = 0;
-    count += this.dungeonTickets.get(dungeonKey);
+    count += this.dungeonTickets.get(dungeonKey) || 0;
     count += this.inventory.reduce(
       (v, slot) =>
         slot.key === 'ticket' && slot.dungeonKey === dungeonKey
@@ -1260,9 +1310,9 @@ export default class Player extends PlayerMeta {
         const mapData1 = maps[a.dungeonKey];
         const mapData2 = maps[b.dungeonKey];
         const level1 =
-          dungeonLevel[a.dungeonKey] || (mapData1 && mapData1.level) || 0;
+          getEndlessMapLevel(a.dungeonKey) || (mapData1 && mapData1.level) || 0;
         const level2 =
-          dungeonLevel[b.dungeonKey] || (mapData1 && mapData2.level) || 0;
+          getEndlessMapLevel(b.dungeonKey) || (mapData1 && mapData2.level) || 0;
         if (level1 !== level2) {
           return level1 - level2;
         }

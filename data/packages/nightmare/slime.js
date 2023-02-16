@@ -10,7 +10,7 @@ define('buffs', 'nightmare.slime.queen.debuff.1', {
   name: '粘液',
   description: '所有行动减缓20%。',
   hooks: {
-    speedRateMul: val => val * 0.8,
+    speedRateMul: (val) => val * 0.8,
   },
 });
 
@@ -18,7 +18,7 @@ extend('buffs', 'nightmare.slime.queen.buff.1', 'manaShield', {
   name: '黏性外壳',
   hooks: {
     hasShield() {
-      return function(val) {
+      return function (val) {
         return true;
       };
     },
@@ -33,7 +33,7 @@ define('skills', 'nightmare.slime.queue.1', {
     return true;
   },
   effect(world, self, level) {
-    for (const target of world.units.filter(v => self.willAttack(v))) {
+    for (const target of world.units.filter((v) => self.willAttack(v))) {
       world.sendDamage('melee', self, target, this, 5000, true);
       target.addBuff('nightmare.slime.queen.debuff.1', 5000);
     }
@@ -90,7 +90,7 @@ define('skills', 'nightmare.slime.queue.3.1', {
   effect(world, self, level) {
     for (const unit of world.units) {
       if (unit.type === 'nightmare.slime.queen') {
-        unit.hp += 16000000;
+        unit.hp += unit.maxHp / 4;
       }
     }
     self.kill();
@@ -117,7 +117,7 @@ define('skills', 'nightmare.slime.queue.4.1', {
   effect(world, self, level) {
     for (const unit of world.units) {
       if (unit.type === 'nightmare.slime.queen') {
-        unit.hp += 16000000;
+        unit.hp += unit.maxHp / 4;
         self.addBuff('enemy.upgrade');
         self.addBuff('enemy.upgrade');
       }
@@ -253,6 +253,7 @@ define('enemies', 'nightmare.slime.queen', {
 define('maps', 'nightmare.slime', {
   name: '噩梦-母体史莱姆',
   isDungeon: true,
+  isEndless: true,
   outside: 'home',
   group: 'nightmare.1',
   requirement: {

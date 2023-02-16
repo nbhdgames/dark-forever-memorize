@@ -32,9 +32,9 @@ extend('skills', 'nightmare.kobold.bomb', 'bomb', {
 extend('skills', 'nightmare.kobold.bomb1', 'bomb', {
   notBreakable: true,
   effect(origin) {
-    return function(world, self, level) {
-      const targets = world.units.filter(v => self.canAttack(v));
-      targets.forEach(target => {
+    return function (world, self, level) {
+      const targets = world.units.filter((v) => self.canAttack(v));
+      targets.forEach((target) => {
         if (world.testDodge(self, target, this)) {
           return;
         }
@@ -68,7 +68,7 @@ define('enemies', 'nightmare.kobold.candle.1', {
 extend('skills', 'nightmare.kobold.1', 'candle.call', {
   coolDown: 30000,
   canUse(origin) {
-    return function(world, self) {
+    return function (world, self) {
       if (self.runAttrHooks(100, 'bossState') <= 50) {
         return false;
       }
@@ -76,7 +76,7 @@ extend('skills', 'nightmare.kobold.1', 'candle.call', {
     };
   },
   effect(origin) {
-    return function(world, self, level) {
+    return function (world, self, level) {
       world.sendSkillUsage(self, null, this);
       world.addEnemy('nightmare.kobold.candle', null, 0, self);
     };
@@ -87,7 +87,7 @@ extend('skills', 'nightmare.kobold.3', 'candle.call', {
   name: '驱散更多暗影',
   coolDown: 30000,
   canUse(origin) {
-    return function(world, self) {
+    return function (world, self) {
       if (self.runAttrHooks(100, 'bossState') > 50) {
         return false;
       }
@@ -95,7 +95,7 @@ extend('skills', 'nightmare.kobold.3', 'candle.call', {
     };
   },
   effect(origin) {
-    return function(world, self, level) {
+    return function (world, self, level) {
       world.sendSkillUsage(self, null, this);
       world.addEnemy('nightmare.kobold.candle.1', null, 0, self);
     };
@@ -107,10 +107,11 @@ define('enemies', 'nightmare.kobold.altar', {
   camp: 'shrine',
   race: 'unknown',
   career: 'melee',
+  atk: 8000,
   onPress(world) {
     for (const unit of world.units) {
       if (unit.camp === 'player' || unit.camp === 'alien') {
-        world.sendDamage('fire', this, unit, null, 8000);
+        world.sendDamage('fire', this, unit, null, this.atk);
       }
     }
     this.kill();
@@ -130,7 +131,7 @@ define('buffs', 'nightmare.kobold.2.2', {
   didRemove(world) {
     for (const unit of world.units) {
       if (unit.camp === 'player' || unit.camp === 'alien') {
-        world.sendDamage('fire', this.unit, unit, null, 40000);
+        world.sendDamage('fire', this.unit, unit, null, this.atk * 5);
       }
     }
     this.unit.kill();
@@ -146,10 +147,10 @@ define('skills', 'nightmare.kobold.2', {
     if (state <= 20 || state > 75) {
       return false;
     }
-    return !!world.units.find(v => v.key === 'nightmare.kobold.altar');
+    return !!world.units.find((v) => v.key === 'nightmare.kobold.altar');
   },
   effect(world, self, level) {
-    const target = world.units.find(v => v.type === 'nightmare.kobold.altar');
+    const target = world.units.find((v) => v.type === 'nightmare.kobold.altar');
     target.startRead('nightmare.kobold.2.2', 5000, null, this);
     self.startRead('nightmare.kobold.2.1', 5000, null, this);
   },
@@ -163,11 +164,11 @@ define('skills', 'nightmare.kobold.4', {
     if (self.runAttrHooks(100, 'bossState') > 20) {
       return false;
     }
-    return !!world.units.find(v => v.type === 'nightmare.kobold.altar');
+    return !!world.units.find((v) => v.type === 'nightmare.kobold.altar');
   },
   effect(world, self, level) {
     for (const target of world.units.filter(
-      v => v.type === 'nightmare.kobold.altar',
+      (v) => v.type === 'nightmare.kobold.altar'
     )) {
       target.startRead('nightmare.kobold.2.2', 5000, null, this);
     }
@@ -248,6 +249,7 @@ define('enemies', 'nightmare.kobold.king', {
 define('maps', 'nightmare.kobold', {
   name: '噩梦-金牙',
   isDungeon: true,
+  isEndless: true,
   outside: 'home',
   group: 'nightmare.1',
   requirement: {

@@ -10,7 +10,7 @@ extend('buffs', 'nightmare.knight.buff.1', 'manaShield', {
   name: '盾墙',
   hooks: {
     hasShield() {
-      return function(val) {
+      return function (val) {
         return true;
       };
     },
@@ -62,14 +62,14 @@ for (let i = 1; i <= 3; i++) {
       return !self.runAttrHooks(false, 'hasShield');
     },
     effect(world, self, level) {
-      self.addBuff(`nightmare.knight.buff.${i}`, 10000, 80000000);
+      self.addBuff(`nightmare.knight.buff.${i}`, 10000, self.hp / 8);
     },
   });
 }
 
 extend('skills', 'nightmare.knight.4', 'knight.melee1', {
   canUse(origin) {
-    return function(world, self) {
+    return function (world, self) {
       if (self.runAttrHooks(100, 'bossState') > 50) {
         return false;
       }
@@ -80,7 +80,7 @@ extend('skills', 'nightmare.knight.4', 'knight.melee1', {
 
 extend('skills', 'nightmare.knight.5', 'knight.deserve', {
   canUse(origin) {
-    return function(world, self) {
+    return function (world, self) {
       if (self.runAttrHooks(100, 'bossState') > 50) {
         return false;
       }
@@ -92,7 +92,7 @@ extend('skills', 'nightmare.knight.5', 'knight.deserve', {
 extend('skills', 'nightmare.knight.6', 'knight.heal', {
   antiBreak: 0.5,
   canUse(origin) {
-    return function(world, self) {
+    return function (world, self) {
       if (self.runAttrHooks(100, 'bossState') > 50) {
         return false;
       }
@@ -100,16 +100,16 @@ extend('skills', 'nightmare.knight.6', 'knight.heal', {
     };
   },
   effect() {
-    return function(world, self, level) {
+    return function (world, self, level) {
       world.sendSkillUsage(self, [self], this);
-      self.hp += 40000000;
+      self.hp += self.maxHp / 16;
     };
   },
 });
 
 extend('skills', 'nightmare.knight.7', 'knight.thumpHead.enemy', {
   canUse(origin) {
-    return function(world, self) {
+    return function (world, self) {
       if (self.runAttrHooks(100, 'bossState') > 25) {
         return false;
       }
@@ -123,7 +123,7 @@ extend('skills', 'nightmare.knight.8', 'shockWave', {
   castTime: 3000,
   antiBreak: 0.5,
   canUse(origin) {
-    return function(world, self) {
+    return function (world, self) {
       if (self.runAttrHooks(100, 'bossState') > 25) {
         return false;
       }
@@ -138,7 +138,7 @@ define('enemies', 'nightmare.knight.boss', {
   camp: 'enemy',
   race: 'unknown',
   career: 'melee',
-  maxHp: 640000000,
+  maxHp: 160000000,
   def: 100,
   allResist: 50,
   exp: 2400,
@@ -217,6 +217,7 @@ define('enemies', 'nightmare.knight.boss', {
 define('maps', 'nightmare.knight', {
   name: '噩梦-卡罗',
   isDungeon: true,
+  isEndless: true,
   outside: 'home',
   group: 'nightmare.2',
   requirement: {

@@ -11,7 +11,7 @@ import {
   autorun,
   makeObservable,
 } from 'mobx';
-import { PlayerMeta, InventorySlot } from './player';
+import { PlayerMeta, InventorySlot, getEndlessLevel } from './player';
 import world from './world';
 import StatusError from './StatusError';
 import { stories, medicines } from '../../data';
@@ -164,6 +164,8 @@ class Game {
 
   @observable lastVersion = null;
 
+  @observable highestEndlessLevel = 0;
+
   banned = false;
 
   @computed
@@ -172,6 +174,12 @@ class Game {
     return (
       400 + 500 * this.playerSlotCount ** 2 + 100 * this.playerSlotCount ** 3
     );
+  }
+
+  @computed
+  get endlessTicketRate() {
+    const l = this.highestEndlessLevel + 1;
+    return Math.pow(0.5 / l, 1 / l);
   }
 
   @computed
@@ -277,6 +285,9 @@ class Game {
     if (v.bowelLevel) {
       this.bowelLevel = v.bowelLevel;
     }
+    if (v.highestEndlessLevel) {
+      this.highestEndlessLevel = v.highestEndlessLevel;
+    }
 
     this.currentPlayer = v.currentPlayer || null;
     this.playerMetas.clear();
@@ -302,6 +313,13 @@ class Game {
     this.bank.clear();
     for (let i = 0; v.bank && i < v.bank.length; i++) {
       this.bank.push(new InventorySlot('bank').fromJS(v.bank[i] || {}));
+      const { key, dungeonKey } = this.banks[i];
+      if (key === 'ticket') {
+        const lvl = getEndlessLevel(dungeonKey);
+        if (lvl && lvl > this.highestEndlessLevel) {
+          this.highestEndlessLevel = lvl;
+        }
+      }
     }
     this.medicineLevel.clear();
     for (const key of Object.keys(medicines)) {
@@ -317,6 +335,7 @@ class Game {
     if (this.playerSlotCount < Object.keys(v.playerMetas).length) {
       this.playerSlotCount = Object.keys(v.playerMetas).length;
     }
+
     return this;
   }
 

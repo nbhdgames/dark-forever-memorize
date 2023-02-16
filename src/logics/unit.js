@@ -1031,7 +1031,7 @@ export class Unit {
     if (casting && casting.notBreakable && !force) {
       return false;
     }
-    if (reading && reading.skill && !reading.skill.notBreakable && force) {
+    if (reading && reading.skill && !reading.skill.notBreakable && !force) {
       return false;
     }
     const { stunResist } = this;
@@ -2052,6 +2052,7 @@ export class EnemyUnit extends Unit {
     // 品质提升100%生命值
     ret *= 2 ** this.quality;
     ret = this.runAttrHooks(ret, 'maxHpMul');
+    ret *= Math.pow(2, world._endlessLevel || 0);
     return ret;
   }
 
@@ -2115,6 +2116,7 @@ export class EnemyUnit extends Unit {
   get hpRecovery() {
     let ret = this.enemyData.hpRecovery || 0;
     ret = this.runAttrHooks(ret, 'hpRecovery');
+    ret *= Math.pow(1.5, world._endlessLevel || 0);
     return ret;
   }
 
@@ -2125,6 +2127,7 @@ export class EnemyUnit extends Unit {
     ret *= this.runAttrHooks(1, 'atkAdd');
     ret *= this.runAttrHooks(1, 'atkMulAttr');
     ret = this.runAttrHooks(ret, 'atkMul');
+    ret *= Math.pow(1.2, world._endlessLevel || 0);
     return ret;
   }
 

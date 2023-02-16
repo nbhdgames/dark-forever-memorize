@@ -224,23 +224,35 @@ export class DungeonState extends EnemyBorn {
       // I'm over!
 
       const { player } = world;
-      const ticketCount = player.countTicket(this.mapData.group || this.map);
+      const ticketType = world._endlessLevel
+        ? 'nightmare.' + world._endlessLevel
+        : this.mapData.group || this.map;
+
+      const ticketCount = player.countTicket(ticketType);
 
       if (ticketCount > 0) {
         toast(`战胜了${this.mapData.name}中的敌人，获得了大量奖励。`);
         const { exp = 0, level, loots } = this.mapData;
         world.gotExp(exp, transformEquipLevel(level));
         world.loots(loots, level, 0);
+        world.lootEndless();
 
         // player.dungeonTickets.set(this.mapData.group || this.map, ticketCount - 1);
-        player.costTicket(this.mapData.group || this.map);
+        player.costTicket(ticketType);
       } else {
         toast(
           `战胜了${this.mapData.name}中的敌人。\n您的钥石不足，因此不能获得奖励。`
         );
       }
       this.currentPhase = null;
-      world.map = world.pendingMaps.shift() || this.mapData.outside;
+      if (world.pendingMaps.length > 0) {
+        const [map, lvl] = world.pendingMaps.shift();
+        world._map = map;
+        world._endlessLevel = lvl;
+        world.onMapChanged();
+      } else {
+        world.map = this.mapData.outside || 'home';
+      }
       return;
     }
     this.phaseBorn =

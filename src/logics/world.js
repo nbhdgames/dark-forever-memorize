@@ -22,6 +22,7 @@ import md5 from 'md5';
 import crypt from 'crypt';
 import { utf8 } from 'charenc';
 import { alert } from '../common/message';
+import game from './game';
 
 const DEBUG_RATE = 1;
 
@@ -103,13 +104,20 @@ class World extends EventEmitter {
     this.resetTimeline();
 
     this._map = worldState.map || 'home';
+    this._endlessLevel = worldState._endlessLevel || 0;
 
     if (worldState.pendingMaps) {
       this.pendingMaps.replace(worldState.pendingMaps);
+      for (let i = 0; i < this.pendingMaps.length; i++) {
+        if (typeof this.pendingMaps[i] === 'string') {
+          this.pendingMaps[i] = [this.pendingMaps[i], 0];
+        }
+      }
     }
 
     if (!maps[this._map]) {
       this._map = 'home';
+      this._endlessLevel = 0;
     }
     this.onMapChanged(worldState);
 
@@ -311,6 +319,8 @@ class World extends EventEmitter {
 
   @observable _map = 'home';
 
+  @observable _endlessLevel = 0;
+
   @observable pendingMaps = [];
 
   get map() {
@@ -500,6 +510,10 @@ class World extends EventEmitter {
     }
     const updateRate = noUpdateRate ? 1 : this.updateRate;
 
+    if (this._endlessLevel) {
+      level += 35 * (this._endlessLevel - 1);
+    }
+
     for (const {
       key,
       type,
@@ -602,7 +616,23 @@ class World extends EventEmitter {
         }
       }
     }
+
     return this.lootGoods(slots, showToast);
+  }
+
+  lootEndless(showToast = false) {
+    if (this._endlessLevel > 0) {
+      if (Math.random() < game.endlessTicketRate) {
+        const slots = [];
+        const slot = new InventorySlot('loot');
+        slot.key = 'ticket';
+        slot.dungeonKey = 'nightmare.' + (this._endlessLevel + 1);
+        slot.count = 1;
+        slots.push(slot);
+
+        return this.lootGoods(slots, showToast);
+      }
+    }
   }
 
   @action

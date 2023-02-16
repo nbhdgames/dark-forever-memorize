@@ -103,8 +103,7 @@ module.exports = {
       type: 'ticket',
       rate: 1,
       dungeons: {
-        'nightmare.1': 2,
-        'nightmare.2': 1,
+        'nightmare.1': 1,
       },
     },
   ],

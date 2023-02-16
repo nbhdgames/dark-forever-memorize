@@ -35,18 +35,18 @@ define('skills', 'nightmare.undead.1', {
     if (state > 75) {
       return false;
     }
-    return !!world.units.find(v => v.type === 'nightmare.undead.minimal');
+    return !!world.units.find((v) => v.type === 'nightmare.undead.minimal');
   },
   effect(world, self, level) {
     const minimal = world.units.find(
-      v => v.type === 'nightmare.undead.minimal',
+      (v) => v.type === 'nightmare.undead.minimal'
     );
     if (!minimal) {
       return;
     }
     const val = minimal.hp / 100;
     minimal.kill();
-    for (const target of world.units.filter(v => self.willAttack(v))) {
+    for (const target of world.units.filter((v) => self.willAttack(v))) {
       world.sendDamage('dark', self, target, this, val, false);
     }
   },
@@ -62,11 +62,11 @@ define('skills', 'nightmare.undead.2', {
     if (state > 50) {
       return false;
     }
-    return !!world.units.find(v => v.type === 'nightmare.undead.minimal');
+    return !!world.units.find((v) => v.type === 'nightmare.undead.minimal');
   },
   effect(world, self, level) {
     for (const target of world.units.filter(
-      v => v.type === 'nightmare.undead.minimal',
+      (v) => v.type === 'nightmare.undead.minimal'
     )) {
       world.sendHeal(self, target, this, target.maxHp);
     }
@@ -162,6 +162,7 @@ define('enemies', 'nightmare.undead.king', {
 define('maps', 'nightmare.undead', {
   name: '噩梦-奈布',
   isDungeon: true,
+  isEndless: true,
   outside: 'home',
   group: 'nightmare.1',
   requirement: {

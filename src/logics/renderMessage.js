@@ -11,6 +11,7 @@ import { maps, goods, buffs } from '../../data';
 import { toast } from '../common/toast';
 import styles from './renderMessage.less';
 import { Text } from '../components';
+import { getEndlessKeyName } from './player';
 
 // 这里保存最近的10000条消息。
 // 在界面上则只显示筛选后的最新1000条。
@@ -26,12 +27,6 @@ const DAMAGE_TYPES = {
 const predefinedGoodName = {
   diamonds: '神力',
   gold: '金币',
-};
-
-export const dungeonNames = {
-  'nightmare.1': '噩梦钥石I',
-  'nightmare.2': '噩梦钥石II',
-  'nightmare.3': '噩梦钥石III',
 };
 
 class MessageDisplay {
@@ -208,10 +203,12 @@ class MessageDisplay {
     if (key === 'ticket') {
       name = (
         <Text className={qualityStyles[5]}>
-          钥石：{dungeonNames[dungeonKey] || maps[dungeonKey].name}
+          钥石：{getEndlessKeyName(dungeonKey) || maps[dungeonKey].name}
         </Text>
       );
-      nameStr = `钥石：${dungeonNames[dungeonKey] || maps[dungeonKey].name}`;
+      nameStr = `钥石：${
+        getEndlessKeyName(dungeonKey) || maps[dungeonKey].name
+      }`;
     } else if (!name) {
       name = (
         <Text className={qualityStyles[qualityId]}>{goods[key].name}</Text>

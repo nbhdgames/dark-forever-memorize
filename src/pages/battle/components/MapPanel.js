@@ -5,12 +5,12 @@
 import React, { Component } from 'react';
 
 import { View, Text, ScrollView, TouchableOpacity } from '../../../components';
-import { action } from 'mobx';
+import { action, runInAction } from 'mobx';
 import { expr } from 'mobx-utils';
 import { observer } from 'mobx-react';
 import world from '../../../logics/world';
 import { maps, stories } from '../../../../data';
-import { InventorySlot } from '../../../logics/player';
+import { InventorySlot, romes } from '../../../logics/player';
 import game from '../../../logics/game';
 
 import styles from './MapPanel.less';
@@ -21,13 +21,30 @@ import Player from '../../stories/Play';
 
 const Map = observer(function Map({
   map,
+  endlessLevel = 0,
   onChangeMap,
   children,
   noActive,
   getMaxCount,
 }) {
-  const active = !noActive && expr(() => world.map === map.key);
-  const pending = expr(() => world.pendingMaps.indexOf(map.key) >= 0);
+  let { name } = map;
+  if (endlessLevel) {
+    name = name.replace('噩梦', '噩梦' + (romes[endlessLevel] || endlessLevel));
+  }
+  const active =
+    !noActive &&
+    expr(() => {
+      if (endlessLevel && endlessLevel != world._endlessLevel) {
+        return false;
+      }
+      return world.map === map.key;
+    });
+  const pending = expr(
+    () =>
+      world.pendingMaps.findIndex((v) => {
+        return v[0] == map.key && v[1] == endlessLevel;
+      }) >= 0
+  );
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -58,7 +75,7 @@ const Map = observer(function Map({
           active && styles.labelActive,
         ]}
       >
-        {map.name}
+        {name}
         {children}
       </Text>
     </TouchableOpacity>
@@ -251,7 +268,7 @@ function diffTime(time) {
 }
 
 const Dungeon = observer(function Dungeon({ map, onChangeMap, showNoTicket }) {
-  const count = world.player.countTicket(map.group || map.key);
+  const count = world.player.countTicket(map.key);
 
   if (showNoTicket ? count > 0 : count <= 0) {
     return null;
@@ -264,9 +281,9 @@ const Dungeon = observer(function Dungeon({ map, onChangeMap, showNoTicket }) {
       onChangeMap={onChangeMap}
       getMaxCount={() => {
         const pendingCount =
-          world.pendingMaps.filter((v) => (maps[v].group || v) === map.key)
-            .length +
-          ((maps[world.map].group || world.map) === map.key ? 1 : 0);
+          world.pendingMaps.filter(
+            (v) => (maps[v[0]].group || v[0]) === map.key
+          ).length + ((maps[world.map].group || world.map) === map.key ? 1 : 0);
         return count - pendingCount;
       }}
     >
@@ -277,6 +294,74 @@ const Dungeon = observer(function Dungeon({ map, onChangeMap, showNoTicket }) {
   );
 });
 
+const groupMaps = [
+  Object.keys(maps).filter((key) => maps[key].group === 'nightmare.1'),
+  Object.keys(maps).filter((key) => maps[key].group === 'nightmare.2'),
+];
+
+function enterEndlessDungeon(key, level) {
+  const count =
+    world.pendingMaps.filter((v) => v[1] === level).length +
+    (maps._endlessLevel === level ? 1 : 0);
+  const { player } = world;
+  const ticket = player.countTicket('nightmare.' + level);
+
+  if (ticket <= count) {
+    alert('提示', `现在没有任何该等级的无尽噩梦钥石`);
+  } else {
+    if (world.pendingMaps.length > 0) {
+      // 进入队列
+      world.pendingMaps.splice(world.pendingMaps.length - 1, 0, [key, level]);
+      return;
+    }
+    // 进入地图，同时当前地图作为pending
+    runInAction(() => {
+      world.pendingMaps.push([world.map, 0]);
+      world._map = key;
+      world._endlessLevel = level;
+      world.onMapChanged();
+    });
+  }
+}
+
+const EndlessMapLevel = observer(function EndlessMapLevel({ level }) {
+  const count = world.player.countTicket('nightmare.' + level);
+  if (!count) {
+    return null;
+  }
+  const groupMap = groupMaps[(level - 1) % 2];
+  return (
+    <View className={styles.endlessGroup}>
+      {groupMap.map((key) => (
+        <Map
+          key={key}
+          isDungeon
+          map={maps[key]}
+          endlessLevel={level}
+          onChangeMap={() => {
+            enterEndlessDungeon(key, level);
+          }}
+          getMaxCount={() => {
+            const pendingCount = 0;
+            return count - pendingCount;
+          }}
+        >
+          <Text className={styles.cooldownCount}>x{`${count}`}</Text>
+        </Map>
+      ))}
+    </View>
+  );
+});
+
+const EndlessMapGroup = observer(function EndlessMapGroup() {
+  const maxLevel = game.highestEndlessLevel;
+  const levels = [];
+  for (let i = 1; i <= maxLevel; i++) {
+    levels.push(<EndlessMapLevel level={i} key={i} />);
+  }
+  return <>{levels}</>;
+});
+
 @observer
 export default class MapPanel extends Component {
   renderMap = (k) => {
@@ -285,10 +370,11 @@ export default class MapPanel extends Component {
   };
 
   renderMapName = (k, i) => {
-    const map = maps[k];
+    const map = maps[k[0]];
     return (
       <Map
         map={map}
+        endlessLevel={k[1]}
         key={'pending-' + i}
         onChangeMap={(map) => this.cancelPendingMap(map, i)}
         noActive
@@ -342,11 +428,11 @@ export default class MapPanel extends Component {
   onEnterDungeon = action((map) => {
     if (world.pendingMaps.length > 0) {
       // 进入队列
-      world.pendingMaps.splice(world.pendingMaps.length - 1, 0, map.key);
+      world.pendingMaps.splice(world.pendingMaps.length - 1, 0, [map.key, 0]);
       return;
     }
     // 进入地图，同时当前地图作为pending
-    world.pendingMaps.push(world.map);
+    world.pendingMaps.push([world.map, 0]);
     world.map = map.key;
     checkStories();
   });
@@ -386,7 +472,7 @@ export default class MapPanel extends Component {
     // }
     const currentKey = map.group || map.key;
     const count =
-      world.pendingMaps.filter((v) => (maps[v].group || v) === currentKey)
+      world.pendingMaps.filter((v) => (maps[v[0]].group || v) === currentKey)
         .length + ((maps[world.map].group || world.map) === currentKey ? 1 : 0);
     const { player } = world;
     const ticket = player.countTicket(currentKey);
@@ -457,18 +543,24 @@ export default class MapPanel extends Component {
           .filter((key) => !maps[key].isDungeon)
           .filter((key) => checkMapRequirement(key))
           .map(this.renderMap)}
+        {game.highestEndlessLevel > 0 && (
+          <View className={styles.section}>
+            <Text className={styles.sectionTitle}>无尽副本</Text>
+          </View>
+        )}
+        {<EndlessMapGroup />}
         <View className={styles.section}>
           <Text className={styles.sectionTitle}>副本</Text>
         </View>
         {Object.keys(maps)
-          .filter((key) => maps[key].isDungeon)
+          .filter((key) => maps[key].isDungeon && !maps[key].isEndless)
           .filter((key) => checkMapRequirement(key))
           .map(this.renderDungeon)}
         <View className={styles.section}>
           <Text className={styles.sectionTitle}>副本（无钥石）</Text>
         </View>
         {Object.keys(maps)
-          .filter((key) => maps[key].isDungeon)
+          .filter((key) => maps[key].isDungeon && !maps[key].isEndless)
           .filter((key) => checkMapRequirement(key))
           .map(this.renderDungeonNoTicket)}
       </ScrollView>
