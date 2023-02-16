@@ -313,7 +313,7 @@ class Game {
     this.bank.clear();
     for (let i = 0; v.bank && i < v.bank.length; i++) {
       this.bank.push(new InventorySlot('bank').fromJS(v.bank[i] || {}));
-      const { key, dungeonKey } = this.banks[i];
+      const { key, dungeonKey } = this.bank[i];
       if (key === 'ticket' && dungeonKey) {
         const lvl = getEndlessLevel(dungeonKey);
         if (lvl && lvl > this.highestEndlessLevel) {
