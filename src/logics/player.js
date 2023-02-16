@@ -849,7 +849,7 @@ export default class Player extends PlayerMeta {
         new InventorySlot('inventory').fromJS(v.inventory[i] || {})
       );
       const { key, dungeonKey } = this.inventory[i];
-      if (key == 'ticket') {
+      if (key == 'ticket' && dungeonKey) {
         const lvl = getEndlessLevel(dungeonKey);
         if (lvl && lvl > game.highestEndlessLevel) {
           game.highestEndlessLevel = lvl;
