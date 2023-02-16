@@ -70,7 +70,6 @@ const Header = observer(function () {
           value={player.minLootLevel}
           onValueChange={(value) => (player.minLootLevel = value)}
           min={1}
-          max={1000}
         />
       </View>
     </View>

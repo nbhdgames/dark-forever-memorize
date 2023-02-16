@@ -234,7 +234,7 @@ export class DungeonState extends EnemyBorn {
         toast(`战胜了${this.mapData.name}中的敌人，获得了大量奖励。`);
         const { exp = 0, level, loots } = this.mapData;
         world.gotExp(
-          exp * Math.pow(1.5, world._endlessLevel),
+          exp * (world._endlessLevel ? Math.pow(1.5, world._endlessLevel) : 1),
           transformEquipLevel(level)
         );
         world.loots(loots, level, 0);

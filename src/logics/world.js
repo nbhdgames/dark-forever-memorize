@@ -609,7 +609,9 @@ class World extends EventEmitter {
           let total = (Math.random() * (max - min + 1) + min) * count;
           if (key === 'gold') {
             total *= this.playerUnit.gf;
-            total *= Math.pow(1.5, this._endlessLevel);
+            total *= world._endlessLevel
+              ? Math.pow(1.5, world._endlessLevel)
+              : 1;
           }
           const slot = new InventorySlot('loot');
           slot.key = key;
