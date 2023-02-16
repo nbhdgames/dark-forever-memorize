@@ -14,10 +14,10 @@ module.exports = {
   },
   expFormula: [2, 10, -4, 2, 0.3],
   attrGrow: {
-    str: 1.5 * 1e10,
+    str: 1.5,
     dex: 1,
     int: 0,
-    sta: 1.5 * 1000,
+    sta: 1.5,
   },
   skills: {
     melee: 1,
