@@ -162,6 +162,8 @@ export const GoodDetail = observer(function GoodDetail(
             <Button
               onPress={() => {
                 world.player.loot(slot, game.bank);
+                game.save();
+                world.player.save();
               }}
             >
               保存
@@ -171,6 +173,8 @@ export const GoodDetail = observer(function GoodDetail(
             <Button
               onPress={() => {
                 world.player.loot(slot);
+                game.save();
+                world.player.save();
               }}
             >
               取出
@@ -210,6 +214,8 @@ export const GoodDetail = observer(function GoodDetail(
             <Button
               onPress={() => {
                 world.player.loot(slot, game.bank);
+                game.save();
+                world.player.save();
               }}
             >
               保存
@@ -219,6 +225,8 @@ export const GoodDetail = observer(function GoodDetail(
             <Button
               onPress={() => {
                 world.player.loot(slot);
+                game.save();
+                world.player.save();
               }}
             >
               取出
