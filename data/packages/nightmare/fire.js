@@ -159,7 +159,7 @@ define('enemies', 'nightmare.fire.kakarif', {
   def: 100,
   allResist: 50,
   exp: 2400,
-  atk: 25000,
+  atk: 15000,
   level: 285,
   atkSpeed: 0.4,
   skills: [

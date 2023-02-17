@@ -329,6 +329,7 @@ class World extends EventEmitter {
 
   set map(map) {
     this._map = map;
+    this._endlessLevel = 0;
     this.onMapChanged();
   }
 

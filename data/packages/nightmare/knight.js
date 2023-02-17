@@ -142,7 +142,7 @@ define('enemies', 'nightmare.knight.boss', {
   def: 100,
   allResist: 50,
   exp: 2400,
-  atk: 25000,
+  atk: 15000,
   level: 285,
   atkSpeed: 0.8,
   skills: [

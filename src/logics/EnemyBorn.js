@@ -291,6 +291,13 @@ export class DungeonState extends EnemyBorn {
     // Failed!
     toast(`在${this.mapData.name}的冒险以失败告终。`);
     this.currentPhase = null;
-    world.map = world.pendingMaps.shift() || this.mapData.outside;
+    if (world.pendingMaps.length > 0) {
+      const [map, lvl] = world.pendingMaps.shift();
+      world._map = map;
+      world._endlessLevel = lvl;
+      world.onMapChanged();
+    } else {
+      world.map = this.mapData.outside || 'home';
+    }
   }
 }
