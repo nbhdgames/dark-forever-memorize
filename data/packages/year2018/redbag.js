@@ -24,7 +24,7 @@ define('goods', 'year2018.redbag', {
     },
     {
       type: 'specialEquip',
-      rate: 0.2,
+      rate: 1,
       items: [
         'year2018.yearBeastWeapon-1',
         'year2018.yearBeastWeapon-2',

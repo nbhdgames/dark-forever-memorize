@@ -116,6 +116,16 @@ export function transformEquipLevel(level) {
   return 70;
 }
 
+export function untransformEquipLevel(level) {
+  if (level < 60) {
+    return level * 2;
+  } else if (level < 70) {
+    return level * 3;
+  } else {
+    return 250;
+  }
+}
+
 export function getEndlessLevel(name) {
   if (name.startsWith('nightmare.')) {
     return Number(name.substr(10)) | 0;

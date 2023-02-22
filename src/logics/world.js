@@ -12,7 +12,7 @@ import { EventEmitter } from 'fbemitter';
 
 import Timeline from './Timeline';
 import EnemyBorn, { DungeonState } from './EnemyBorn';
-import { InventorySlot } from './player';
+import { InventorySlot, untransformEquipLevel } from './player';
 import { Camps, PlayerUnit, EnemyUnit } from './unit';
 import message from './message';
 import camelCase from 'camelcase';
@@ -550,12 +550,11 @@ class World extends EventEmitter {
           }
         } else if (type === 'equip' || type === 'specialEquip') {
           const minLevel = Math.max(1, Math.min(level - 15, level * 0.8));
-          const eLevel = Math.ceil(
-            minLevel + Math.random() * (level - minLevel)
-          );
+          let eLevel = Math.ceil(minLevel + Math.random() * (level - minLevel));
           let slot;
 
           if (type === 'specialEquip') {
+            eLevel = untransformEquipLevel(this.player.level);
             const legendType = items[Math.floor(Math.random() * items.length)];
             slot = generateEquip(
               legends[legendType].type,

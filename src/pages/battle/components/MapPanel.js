@@ -302,7 +302,8 @@ const groupMaps = [
 function enterEndlessDungeon(key, level) {
   const count =
     world.pendingMaps.filter((v) => v[1] === level).length +
-    (maps._endlessLevel === level ? 1 : 0);
+    (world._endlessLevel === level ? 1 : 0);
+  console.log('Here', count);
   const { player } = world;
   const ticket = player.countTicket('nightmare.' + level);
 
@@ -472,8 +473,9 @@ export default class MapPanel extends Component {
     // }
     const currentKey = map.group || map.key;
     const count =
-      world.pendingMaps.filter((v) => (maps[v[0]].group || v) === currentKey)
+      world.pendingMaps.filter((v) => (maps[v[0]].group || v[0]) === currentKey)
         .length + ((maps[world.map].group || world.map) === currentKey ? 1 : 0);
+
     const { player } = world;
     const ticket = player.countTicket(currentKey);
 
