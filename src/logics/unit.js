@@ -2052,7 +2052,7 @@ export class EnemyUnit extends Unit {
     // 品质提升100%生命值
     ret *= 2 ** this.quality;
     ret = this.runAttrHooks(ret, 'maxHpMul');
-    if (world._endlessLevel) {
+    if (world._endlessLevel && this.camp == Camps.enemy) {
       ret *= Math.pow(2, world._endlessLevel - 1);
     }
     return ret;
@@ -2118,7 +2118,7 @@ export class EnemyUnit extends Unit {
   get hpRecovery() {
     let ret = this.enemyData.hpRecovery || 0;
     ret = this.runAttrHooks(ret, 'hpRecovery');
-    if (world._endlessLevel) {
+    if (world._endlessLevel && this.camp == Camps.enemy) {
       ret *= Math.pow(1.5, world._endlessLevel - 1);
     }
     return ret;
@@ -2131,7 +2131,7 @@ export class EnemyUnit extends Unit {
     ret *= this.runAttrHooks(1, 'atkAdd');
     ret *= this.runAttrHooks(1, 'atkMulAttr');
     ret = this.runAttrHooks(ret, 'atkMul');
-    if (world._endlessLevel) {
+    if (world._endlessLevel && this.camp == Camps.enemy) {
       ret *= Math.pow(1.2, world._endlessLevel - 1);
     }
     return ret;
