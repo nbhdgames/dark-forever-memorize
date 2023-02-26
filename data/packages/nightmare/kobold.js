@@ -131,7 +131,7 @@ define('buffs', 'nightmare.kobold.2.2', {
   didRemove(world) {
     for (const unit of world.units) {
       if (unit.camp === 'player' || unit.camp === 'alien') {
-        world.sendDamage('fire', this.unit, unit, null, this.atk * 5);
+        world.sendDamage('fire', this.unit, unit, null, this.unit.atk * 5);
       }
     }
     this.unit.kill();

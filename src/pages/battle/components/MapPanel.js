@@ -303,7 +303,6 @@ function enterEndlessDungeon(key, level) {
   const count =
     world.pendingMaps.filter((v) => v[1] === level).length +
     (world._endlessLevel === level ? 1 : 0);
-  console.log('Here', count);
   const { player } = world;
   const ticket = player.countTicket('nightmare.' + level);
 
