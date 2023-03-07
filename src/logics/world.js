@@ -173,7 +173,7 @@ class World extends EventEmitter {
     return {
       map: this._map,
       pendingMaps: this.pendingMaps,
-      endlessLevel: this.endlessLevel,
+      endlessLevel: this._endlessLevel,
       enemyBorn: this.enemyBorn && this.enemyBorn.dumpState(),
       units: this.units.map((v) => v && v.dumpState()),
     };
