@@ -39,7 +39,7 @@ extend('skills', 'nightmare.kobold.bomb1', 'bomb', {
           return;
         }
         world.sendDamage('fire', self, target, this, self.atk, false);
-        target.stun(5000);
+        target.stun(5);
       });
       self.kill();
     };

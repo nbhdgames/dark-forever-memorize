@@ -241,8 +241,8 @@ define('maps', 'nightmare.fire', {
     },
   ],
   stunResist: 10000,
-  resetPrice: 285,
-  level: 285,
+  resetPrice: 250,
+  level: 250,
   exp: 5000000,
   loots: [
     {

@@ -104,7 +104,7 @@ class World extends EventEmitter {
     this.resetTimeline();
 
     this._map = worldState.map || 'home';
-    this._endlessLevel = worldState._endlessLevel || 0;
+    this._endlessLevel = worldState.endlessLevel || 0;
 
     if (worldState.pendingMaps) {
       this.pendingMaps.replace(worldState.pendingMaps);
@@ -173,6 +173,7 @@ class World extends EventEmitter {
     return {
       map: this._map,
       pendingMaps: this.pendingMaps,
+      endlessLevel: this.endlessLevel,
       enemyBorn: this.enemyBorn && this.enemyBorn.dumpState(),
       units: this.units.map((v) => v && v.dumpState()),
     };
