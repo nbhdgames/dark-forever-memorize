@@ -2053,7 +2053,7 @@ export class EnemyUnit extends Unit {
     ret *= 2 ** this.quality;
     ret = this.runAttrHooks(ret, 'maxHpMul');
     if (world._endlessLevel && this.camp == Camps.enemy) {
-      ret *= Math.pow(2, world._endlessLevel - 1);
+      ret *= Math.pow(1.5, world._endlessLevel - 1);
     }
     return ret;
   }
