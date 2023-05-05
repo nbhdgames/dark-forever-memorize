@@ -4,6 +4,7 @@
 
 import React, { Component, createRef } from 'react';
 import { View, Text, TouchableOpacity, ListView } from '../../components';
+import { Upload } from '../../components/upload';
 import { action, autorun, observable } from 'mobx';
 import { observer } from 'mobx-react';
 
@@ -14,6 +15,7 @@ import NavBar from '../NavBar';
 import styles from './Choose.less';
 import { alert } from '../../common/message';
 import { router } from '../../common/history';
+import { BigBtn } from '../inventory/Inventory';
 
 const ChooseItem = observer(function ChooseItem(
   { meta, id, editing, entering },
@@ -126,6 +128,12 @@ export default class PlayerChoose extends Component {
     router.navigate('/player/create');
   };
 
+  uploadFile = (e) => {
+    if (e.target.files) {
+      game.importSaveFile(e.target.files[0]);
+    }
+  };
+
   purchaseSlot = () => {
     if (game.diamonds >= game.purchaseSlotPrice) {
       alert(
@@ -188,6 +196,8 @@ export default class PlayerChoose extends Component {
               : this.renderPurchase
           }
         />
+        <BigBtn onPress={() => game.exportSaveFile()}>导出存档</BigBtn>
+        <Upload uploadFile={this.uploadFile}>导入存档</Upload>
       </NavBar>
     );
   }
